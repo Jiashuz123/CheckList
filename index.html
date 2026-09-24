@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Dashboard">
+<meta name="theme-color" content="#f2f2f7">
+<title>My Dashboard</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎮</text></svg>">
+<style>
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  :root { color-scheme: light; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", sans-serif;
+    background: #f2f2f7; color: #1c1c1e;
+    padding-bottom: calc(76px + env(safe-area-inset-bottom));
+  }
+  .wrap { max-width: 600px; margin: 0 auto; padding: 16px 16px 24px; }
+  header { padding: 8px 4px 12px; }
+  header h1 { font-size: 28px; margin: 0; letter-spacing: -0.5px; }
+  header .date { color: #8e8e93; font-size: 14px; margin-top: 4px; }
+
+  .card { background: #fff; border-radius: 16px; padding: 16px; box-shadow: 0 1px 4px rgba(0,0,0,0.06); margin-bottom: 12px; }
+  .section-title { font-size: 17px; font-weight: 700; margin: 20px 4px 10px; }
+
+  /* dashboard (todos tab) */
+  .dash-top { display: flex; align-items: center; gap: 14px; }
+  .level-badge { width: 64px; height: 64px; border-radius: 50%; background: linear-gradient(135deg, #007AFF, #5856D6); color: #fff; display: flex; flex-direction: column; align-items: center; justify-content: center; flex-shrink: 0; }
+  .level-badge .lv { font-size: 10px; opacity: 0.85; text-transform: uppercase; letter-spacing: 1px; }
+  .level-badge .num { font-size: 26px; font-weight: 700; line-height: 1; }
+  .dash-meta { flex: 1; }
+  .dash-meta .pts { font-size: 15px; font-weight: 600; }
+  .dash-meta .sub { font-size: 13px; color: #8e8e93; margin-top: 2px; }
+  .progress { height: 8px; background: #e9e9ee; border-radius: 99px; margin-top: 10px; overflow: hidden; }
+  .progress > div { height: 100%; background: linear-gradient(90deg, #007AFF, #5856D6); border-radius: 99px; transition: width 0.3s; }
+  .stats { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .stat { background: #fff; border-radius: 16px; padding: 14px 16px; box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
+  .stat .k { font-size: 12px; color: #8e8e93; text-transform: uppercase; letter-spacing: 0.5px; }
+  .stat .v { font-size: 22px; font-weight: 700; margin-top: 4px; }
+  .stat .v small { font-size: 13px; font-weight: 400; color: #8e8e93; }
+
+  /* todos */
+  .todo { background: #fff; border-radius: 14px; padding: 12px; box-shadow: 0 1px 4px rgba(0,0,0,0.06); margin-bottom: 8px; display: flex; gap: 12px; align-items: flex-start; }
+  .todo.done { opacity: 0.55; }
+  .todo.done .title { text-decoration: line-through; }
+  .check { width: 28px; height: 28px; min-width: 28px; border-radius: 50%; border: 2px solid #c7c7cc; background: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 16px; color: #fff; padding: 0; margin-top: 1px; }
+  .check.on { background: #34C759; border-color: #34C759; }
+  .todo-body { flex: 1; min-width: 0; }
+  .title { font-size: 16px; font-weight: 600; overflow-wrap: break-word; }
+  .notes { font-size: 13px; color: #8e8e93; margin-top: 3px; overflow-wrap: break-word; }
+  .row2 { display: flex; align-items: center; gap: 8px; margin-top: 8px; flex-wrap: wrap; }
+  .badge { font-size: 12px; font-weight: 600; padding: 3px 9px; border-radius: 99px; background: #e9e9ee; color: #636366; }
+  .badge.overdue { background: #ffe5e5; color: #d70015; }
+  .badge.today { background: #fff3df; color: #b25000; }
+  .badge.soon { background: #e5f1ff; color: #0066cc; }
+  .due-input { font-size: 13px; border: 1px solid #e5e5ea; border-radius: 8px; padding: 6px 8px; color: #1c1c1e; background: #f9f9fb; min-height: 36px; }
+  .icon-btn { border: none; background: none; font-size: 17px; cursor: pointer; padding: 8px; min-width: 40px; min-height: 40px; color: #8e8e93; }
+  .icon-btn:active { color: #d70015; }
+
+  /* forms */
+  .field { margin-bottom: 10px; }
+  .field label { display: block; font-size: 13px; color: #8e8e93; margin-bottom: 5px; }
+  input[type="text"], input[type="date"], input[type="number"], select {
+    width: 100%; font-size: 16px; padding: 11px 12px;
+    border: 1px solid #e5e5ea; border-radius: 12px; background: #f9f9fb; color: #1c1c1e;
+  }
+  .btn { width: 100%; min-height: 48px; border: none; border-radius: 14px; background: #007AFF; color: #fff; font-size: 17px; font-weight: 600; cursor: pointer; }
+  .btn:active { background: #0063d1; }
+  .btn.danger { background: #ff3b30; }
+  .btn.ghost { background: #e9e9ee; color: #007AFF; }
+
+  /* money */
+  .hero { text-align: center; padding: 20px 16px; }
+  .hero .k { font-size: 13px; color: #8e8e93; text-transform: uppercase; letter-spacing: 0.5px; }
+  .hero .v { font-size: 42px; font-weight: 800; letter-spacing: -1px; margin-top: 6px; }
+  .hero .sub { font-size: 13px; color: #8e8e93; margin-top: 6px; }
+  .bucket { display: flex; align-items: center; gap: 12px; }
+  .bucket .emoji { font-size: 32px; }
+  .bucket .info { flex: 1; }
+  .bucket .name { font-size: 16px; font-weight: 700; }
+  .bucket .bal { font-size: 24px; font-weight: 800; margin-top: 2px; }
+  .bucket .meta { font-size: 12px; color: #8e8e93; margin-top: 4px; }
+  .bucket .bar { height: 6px; background: #e9e9ee; border-radius: 99px; margin-top: 8px; overflow: hidden; }
+  .bucket .bar > div { height: 100%; border-radius: 99px; }
+  .exp { display: flex; align-items: center; gap: 10px; padding: 10px 0; border-top: 1px solid #f0f0f4; }
+  .exp:first-child { border-top: none; }
+  .exp .amt { font-weight: 700; font-size: 15px; min-width: 70px; }
+  .exp .what { flex: 1; min-width: 0; }
+  .exp .what .n { font-size: 14px; overflow-wrap: break-word; }
+  .exp .what .d { font-size: 12px; color: #8e8e93; }
+
+  /* markets */
+  .mrow { display: flex; align-items: center; gap: 10px; padding: 12px 0; border-top: 1px solid #f0f0f4; }
+  .mrow:first-child { border-top: none; }
+  .mrow .sym { font-size: 17px; font-weight: 800; min-width: 76px; }
+  .mrow .px { flex: 1; text-align: right; }
+  .mrow .px .p { font-size: 17px; font-weight: 700; }
+  .mrow .chg { font-size: 13px; font-weight: 600; padding: 2px 8px; border-radius: 99px; min-width: 70px; text-align: center; }
+  .chg.up { background: #e5f9ee; color: #0a7d3b; }
+  .chg.dn { background: #ffe5e5; color: #d70015; }
+  .chg.flat { background: #e9e9ee; color: #636366; }
+  .muted { color: #8e8e93; font-size: 13px; text-align: center; padding: 8px 0; }
+
+  .empty { text-align: center; color: #8e8e93; padding: 24px 0; font-size: 15px; }
+  .foot { text-align: center; color: #aeaeb2; font-size: 12px; margin-top: 18px; }
+
+  /* tab bar */
+  .tabbar {
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: 40;
+    background: rgba(255,255,255,0.94); backdrop-filter: blur(12px);
+    border-top: 1px solid #e5e5ea;
+    padding-bottom: env(safe-area-inset-bottom);
+    display: flex;
+  }
+  .tabbar button {
+    flex: 1; border: none; background: none; cursor: pointer;
+    padding: 8px 0 6px; font-size: 10px; color: #8e8e93;
+    display: flex; flex-direction: column; align-items: center; gap: 3px;
+    min-height: 56px;
+  }
+  .tabbar button .te { font-size: 22px; }
+  .tabbar button.active { color: #007AFF; font-weight: 700; }
+  .panel { display: none; }
+  .panel.active { display: block; }
+
+  .seg { display: flex; gap: 8px; }
+  .seg button { flex: 1; min-height: 44px; border-radius: 12px; border: 1px solid #e5e5ea; background: #f9f9fb; font-size: 15px; font-weight: 600; cursor: pointer; color: #1c1c1e; }
+  .seg button.sel { background: #007AFF; border-color: #007AFF; color: #fff; }
+
+  #toast {
+    position: fixed; left: 50%; transform: translateX(-50%) translateY(20px);
+    bottom: calc(100px + env(safe-area-inset-bottom));
+    background: #1c1c1e; color: #fff; font-size: 15px; font-weight: 600;
+    padding: 12px 20px; border-radius: 99px; opacity: 0; pointer-events: none;
+    transition: opacity 0.25s, transform 0.25s; z-index: 50; max-width: 90vw; text-align: center;
+  }
+  #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1 id="pageTitle">Todos</h1>
+    <div class="date" id="dateLine"></div>
+  </header>
+
+  <!-- TODOS -->
+  <div class="panel active" id="panel-todos">
+    <div class="card">
+      <div class="dash-top">
+        <div class="level-badge"><span class="lv">Level</span><span class="num" id="levelNum">1</span></div>
+        <div class="dash-meta">
+          <div class="pts" id="lifetimePts">0 lifetime points</div>
+          <div class="sub" id="weekPts">0 this week</div>
+          <div class="progress"><div id="levelBar" style="width:0%"></div></div>
+          <div class="sub" id="levelSub">0 / 100 to next level</div>
+        </div>
+      </div>
+    </div>
+    <div class="stats">
+      <div class="stat"><div class="k">🔥 Streak</div><div class="v" id="streakNow">0 <small>days</small></div></div>
+      <div class="stat"><div class="k">🏆 Best streak</div><div class="v" id="streakBest">0 <small>days</small></div></div>
+    </div>
+    <div class="section-title">Today's todos</div>
+    <div id="todoList"></div>
+    <div class="section-title">Add a todo</div>
+    <div class="card">
+      <div class="field"><label for="fTitle">Title</label><input type="text" id="fTitle" placeholder="e.g. Finish problem set 3" autocomplete="off"></div>
+      <div class="field"><label for="fDue">Due date (optional)</label><input type="date" id="fDue"></div>
+      <div class="field"><label for="fNotes">Notes (optional)</label><input type="text" id="fNotes" placeholder="Anything to remember" autocomplete="off"></div>
+      <button class="btn" id="addBtn">Add todo</button>
+    </div>
+    <div class="foot">10 pts per todo · +5 if done on time · level up every 100 pts</div>
+  </div>
+
+  <!-- FUN MONEY -->
+  <div class="panel" id="panel-money">
+    <div class="card hero">
+      <div class="k">💰 Fun money available</div>
+      <div class="v" id="moneyTotal">$0.00</div>
+      <div class="sub" id="moneySub"></div>
+    </div>
+    <div class="card">
+      <div class="bucket">
+        <div class="emoji">🍽️</div>
+        <div class="info">
+          <div class="name">Dining out</div>
+          <div class="bal" id="diningBal">$0.00</div>
+          <div class="meta" id="diningMeta"></div>
+          <div class="bar"><div id="diningBar" style="width:0%;background:#FF9500"></div></div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="bucket">
+        <div class="emoji">🎉</div>
+        <div class="info">
+          <div class="name">Pure fun</div>
+          <div class="bal" id="funBal">$0.00</div>
+          <div class="meta" id="funMeta"></div>
+          <div class="bar"><div id="funBar" style="width:0%;background:#5856D6"></div></div>
+        </div>
+      </div>
+    </div>
+    <div class="section-title">Log an expense</div>
+    <div class="card">
+      <div class="field"><label for="eAmt">Amount ($)</label><input type="number" id="eAmt" placeholder="0.00" min="0" step="0.01" inputmode="decimal"></div>
+      <div class="field"><label>Bucket</label>
+        <div class="seg" id="eBucketSeg">
+          <button data-b="dining" class="sel">🍽️ Dining</button>
+          <button data-b="fun">🎉 Pure fun</button>
+        </div>
+      </div>
+      <div class="field"><label for="eNote">Note (optional)</label><input type="text" id="eNote" placeholder="e.g. Hot pot with friends" autocomplete="off"></div>
+      <button class="btn" id="addExpBtn">Log expense</button>
+    </div>
+    <div class="section-title">Recent expenses</div>
+    <div class="card" id="expList"><div class="empty">No expenses logged this month.</div></div>
+    <div class="foot">Todo points convert to Pure Fun money at your rate (Settings).</div>
+  </div>
+
+  <!-- MARKETS -->
+  <div class="panel" id="panel-markets">
+    <div class="card" id="marketList"><div class="muted">Loading prices…</div></div>
+    <div class="muted" id="marketUpdated"></div>
+    <div class="section-title">Watchlist</div>
+    <div class="card">
+      <div class="field"><label for="mSym">Add symbol (e.g. AAPL, TSLA)</label><input type="text" id="mSym" placeholder="Symbol" autocomplete="off" autocapitalize="characters"></div>
+      <button class="btn" id="addSymBtn">Add to watchlist</button>
+      <div style="height:8px"></div>
+      <button class="btn ghost" id="refreshBtn">↻ Refresh prices</button>
+    </div>
+    <div class="foot">Prices via public market data · intraday change vs open · needs internet</div>
+  </div>
+
+  <!-- SETTINGS -->
+  <div class="panel" id="panel-settings">
+    <div class="section-title">Fun money rules</div>
+    <div class="card">
+      <div class="field"><label for="sRate">Dollars per todo point (e.g. 0.10 = 100 pts → $10)</label><input type="number" id="sRate" min="0" step="0.01" inputmode="decimal"></div>
+      <div class="field"><label for="sBase">Monthly dining-out base allowance ($)</label><input type="number" id="sBase" min="0" step="1" inputmode="decimal"></div>
+      <div class="field"><label>Unspent Pure Fun rolls over to next month</label>
+        <div class="seg" id="sRolloverSeg">
+          <button data-v="1" class="sel">On</button>
+          <button data-v="0">Off</button>
+        </div>
+      </div>
+      <button class="btn" id="saveSettingsBtn">Save settings</button>
+    </div>
+    <div class="section-title">Danger zone</div>
+    <div class="card">
+      <button class="btn danger" id="resetBtn">Reset all data</button>
+    </div>
+    <div class="foot">All data stays on this device.</div>
+  </div>
+</div>
+
+<nav class="tabbar">
+  <button data-tab="todos" class="active"><span class="te">✅</span>Todos</button>
+  <button data-tab="money"><span class="te">💰</span>Fun money</button>
+  <button data-tab="markets"><span class="te">📈</span>Markets</button>
+  <button data-tab="settings"><span class="te">⚙️</span>Settings</button>
+</nav>
+<div id="toast"></div>
+
+<script>
+"use strict";
+/* ================= utils ================= */
+const $ = id => document.getElementById(id);
+function pad2(n){ return String(n).padStart(2, "0"); }
+function todayStr(d){
+  d = d || new Date();
+  return d.getFullYear() + "-" + pad2(d.getMonth()+1) + "-" + pad2(d.getDate());
+}
+function monthKey(d){
+  d = d || new Date();
+  return d.getFullYear() + "-" + pad2(d.getMonth()+1);
+}
+function prevMonth(mk){
+  const parts = mk.split("-").map(Number);
+  let y = parts[0], m = parts[1] - 1;
+  if (m < 1) { m = 12; y -= 1; }
+  return y + "-" + pad2(m);
+}
+function uid(){ return Date.now().toString(36) + Math.random().toString(36).slice(2, 8); }
+function esc(s){
+  return String(s == null ? "" : s).replace(/[&<>"']/g, c => ({
+    "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+  }[c]));
+}
+function round2(n){ return Math.round((n + Number.EPSILON) * 100) / 100; }
+function fmtMoney(n){ return "$" + round2(n).toFixed(2); }
+function fmtDate(iso){
+  if (!iso) return "";
+  const p = iso.split("-").map(Number);
+  return new Date(p[0], p[1]-1, p[2]).toLocaleDateString(undefined, { month: "short", day: "numeric" });
+}
+function monthLabel(mk){
+  const p = mk.split("-").map(Number);
+  return new Date(p[0], p[1]-1, 1).toLocaleDateString(undefined, { month: "long", year: "numeric" });
+}
+
+/* ================= state ================= */
+const LS_KEY = "personalDashboard.v1";
+
+function seedState(){
+  return {
+    v: 1,
+    todos: [
+      { id: uid()+"1", title: "CS103 problem set", notes: "Due Friday — verify exact title & time", due: "2026-09-25", done: false },
+      { id: uid()+"2", title: "Find CS148 check-in Zoom link", notes: "Meeting Mon 9/28 1:00 PM", due: "2026-09-27", done: false },
+      { id: uid()+"3", title: "MS&E 226 PS1", notes: "Due Mon 11:59 PM", due: "2026-09-28", done: false },
+      { id: uid()+"4", title: "STATS 118 homework", notes: "Check Gradescope / Ed", due: "", done: false },
+      { id: uid()+"5", title: "Study early STATS 118 chapter", notes: "", due: "", done: false },
+      { id: uid()+"6", title: "Watch a STATS 118 lecture", notes: "", due: "", done: false }
+    ],
+    lifetime: 0,
+    weekly: 0,
+    weekStart: weekStartStr(),
+    streak: { current: 0, best: 0, lastDoneDate: "" },
+    completions: {},
+    money: {
+      rate: 0.10,          // dollars per todo point
+      diningBase: 150,     // monthly dining-out base allowance
+      rollover: true,      // unspent pure-fun rolls into next month
+      months: {}
+    },
+    watchlist: ["QQQ", "IQQ", "QQQM", "SPY"]
+  };
+}
+
+function loadState(){
+  try {
+    const raw = localStorage.getItem(LS_KEY);
+    if (!raw) { const s = seedState(); ensureMonth(s); return s; }
+    const s = JSON.parse(raw);
+    if (!s || typeof s !== "object" || !Array.isArray(s.todos) || typeof s.lifetime !== "number") throw new Error("bad shape");
+    if (!s.money || typeof s.money !== "object") s.money = seedState().money;
+    if (!s.money.months) s.money.months = {};
+    if (!Array.isArray(s.watchlist)) s.watchlist = ["QQQ"];
+    ensureMonth(s);
+    return s;
+  } catch (e) {
+    const s = seedState(); ensureMonth(s); return s;
+  }
+}
+
+let state = loadState();
+function save(){
+  try { localStorage.setItem(LS_KEY, JSON.stringify(state)); }
+  catch (e) { /* storage full/blocked: keep running in-memory */ }
+}
+
+/* ================= money engine ================= */
+function newDiningMonth(){ return { spent: 0, expenses: [] }; }
+function newFunMonth(){ return { earned: 0, spent: 0, carryIn: 0, expenses: [] }; }
+
+function ensureMonth(s, mk){
+  mk = mk || monthKey();
+  if (!s.money.months[mk]) {
+    const m = { dining: newDiningMonth(), fun: newFunMonth() };
+    const prev = s.money.months[prevMonth(mk)];
+    if (s.money.rollover && prev) {
+      m.fun.carryIn = round2(Math.max(0, prev.fun.earned + prev.fun.carryIn - prev.fun.spent));
+    }
+    s.money.months[mk] = m;
+  }
+  return s.money.months[mk];
+}
+
+function balances(s, mk){
+  const m = ensureMonth(s, mk || monthKey());
+  const dining = round2(s.money.diningBase - m.dining.spent);
+  const fun = round2(m.fun.earned + m.fun.carryIn - m.fun.spent);
+  return {
+    dining, fun, total: round2(dining + fun),
+    diningSpent: round2(m.dining.spent),
+    funEarned: round2(m.fun.earned + m.fun.carryIn),
+    funSpent: round2(m.fun.spent)
+  };
+}
+
+/* credit dollars into Pure Fun when todo points are earned */
+function creditPoints(s, pts, mk){
+  const m = ensureMonth(s, mk || monthKey());
+  m.fun.earned = round2(m.fun.earned + pts * s.money.rate);
+}
+
+function addExpense(s, bucket, amount, note, date, mk){
+  amount = round2(Number(amount));
+  if (!(amount > 0) || (bucket !== "dining" && bucket !== "fun")) return false;
+  const m = ensureMonth(s, mk || monthKey());
+  m[bucket].expenses.unshift({ id: uid(), date: date || todayStr(), amount, note: note || "" });
+  m[bucket].spent = round2(m[bucket].spent + amount);
+  return true;
+}
+
+function deleteExpense(s, bucket, id, mk){
+  const m = ensureMonth(s, mk || monthKey());
+  const i = m[bucket].expenses.findIndex(e => e.id === id);
+  if (i < 0) return false;
+  m[bucket].spent = round2(Math.max(0, m[bucket].spent - m[bucket].expenses[i].amount));
+  m[bucket].expenses.splice(i, 1);
+  return true;
+}
+
+/* ================= todo engine (tested rules) ================= */
+function weekStartStr(d){
+  d = d ? new Date(d) : new Date();
+  const day = (d.getDay() + 6) % 7; // Monday = 0
+  d.setDate(d.getDate() - day);
+  return todayStr(d);
+}
+function rolloverWeekly(s, now){
+  const ws = weekStartStr(now);
+  if (s.weekStart !== ws) { s.weekStart = ws; s.weekly = 0; }
+}
+function isStreakAlive(s, today){
+  if (!s.streak.lastDoneDate) return s.streak.current === 0;
+  const last = new Date(s.streak.lastDoneDate + "T12:00:00");
+  const t = new Date(today + "T12:00:00");
+  const diff = Math.round((t - last) / 86400000);
+  return diff <= 1;
+}
+function recordCompletion(s, today){
+  if (s.streak.lastDoneDate === today) return;
+  s.streak.current = isStreakAlive(s, today) ? s.streak.current + 1 : 1;
+  if (s.streak.current > s.streak.best) s.streak.best = s.streak.current;
+  s.streak.lastDoneDate = today;
+}
+function awardPoints(s, pts, today){
+  s.lifetime += pts;
+  s.weekly += pts;
+  creditPoints(s, pts);
+}
+function revokePoints(s, pts){
+  s.lifetime = Math.max(0, s.lifetime - pts);
+  s.weekly = Math.max(0, s.weekly - pts);
+  const m = ensureMonth(s);
+  m.fun.earned = round2(Math.max(0, m.fun.earned - pts * s.money.rate));
+}
+function levelFor(lifetime){ return Math.floor(lifetime / 100) + 1; }
+function toggleTodo(s, id, today){
+  const t = s.todos.find(x => x.id === id);
+  if (!t) return null;
+  t.done = !t.done;
+  if (t.done) {
+    let pts = 10;
+    if (t.due && today <= t.due) pts += 5; // on-time bonus: done on/before due date
+    recordCompletion(s, today);
+    awardPoints(s, pts, today);
+    s.completions[t.id + "@" + today] = pts;
+    return pts;
+  } else {
+    const key = t.id + "@" + today;
+    const pts = s.completions[key] || 0;
+    if (pts) { revokePoints(s, pts); delete s.completions[key]; }
+    return 0;
+  }
+}
+/* ================= UI: shared ================= */
+let toastTimer = null;
+function toast(msg){
+  const el = $("toast");
+  el.textContent = msg;
+  el.classList.add("show");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove("show"), 2200);
+}
+function dueBadge(due, today){
+  if (!due) return "";
+  let cls = "", label = fmtDate(due);
+  if (due < today) { cls = "overdue"; label = "overdue"; }
+  else if (due === today) { cls = "today"; label = "today"; }
+  else {
+    const diff = Math.round((new Date(due + "T12:00:00") - new Date(today + "T12:00:00")) / 86400000);
+    if (diff <= 3) cls = "soon";
+  }
+  return '<span class="badge ' + cls + '">' + esc(label) + "</span>";
+}
+
+/* ================= UI: todos ================= */
+function renderDashboard(){
+  const lvl = levelFor(state.lifetime);
+  $("levelNum").textContent = lvl;
+  $("lifetimePts").textContent = state.lifetime + " lifetime points";
+  $("weekPts").textContent = state.weekly + " this week · " + fmtMoney(state.weekly * state.money.rate) + " earned";
+  const into = state.lifetime % 100;
+  $("levelBar").style.width = into + "%";
+  $("levelSub").textContent = into + " / 100 to level " + (lvl + 1);
+  $("streakNow").innerHTML = state.streak.current + " <small>days</small>";
+  $("streakBest").innerHTML = state.streak.best + " <small>days</small>";
+}
+
+function renderTodos(){
+  const today = todayStr();
+  const box = $("todoList");
+  if (!state.todos.length) { box.innerHTML = '<div class="empty">Nothing to do. Add one below 🎯</div>'; return; }
+  const sorted = [...state.todos].sort((a, b) => {
+    if (a.done !== b.done) return a.done ? 1 : -1;
+    if (!a.due && !b.due) return 0;
+    if (!a.due) return 1;
+    if (!b.due) return -1;
+    return a.due < b.due ? -1 : 1;
+  });
+  box.innerHTML = sorted.map(t => `
+    <div class="todo${t.done ? " done" : ""}">
+      <button class="check${t.done ? " on" : ""}" data-act="toggle" data-id="${t.id}">${t.done ? "✓" : ""}</button>
+      <div class="todo-body">
+        <div class="title">${esc(t.title)}</div>
+        ${t.notes ? `<div class="notes">${esc(t.notes)}</div>` : ""}
+        <div class="row2">
+          ${dueBadge(t.due, today)}
+          <input type="date" class="due-input" data-id="${t.id}" value="${esc(t.due || "")}">
+          <button class="icon-btn" data-act="del" data-id="${t.id}" title="Delete">🗑</button>
+        </div>
+      </div>
+    </div>`).join("");
+}
+
+function addTodo(){
+  const title = $("fTitle").value.trim();
+  if (!title) { toast("Give the todo a title first"); return; }
+  state.todos.push({ id: uid(), title, notes: $("fNotes").value.trim(), due: $("fDue").value, done: false });
+  $("fTitle").value = ""; $("fNotes").value = ""; $("fDue").value = "";
+  save(); renderTodos();
+  toast("Todo added ✓");
+}
+
+/* ================= UI: fun money ================= */
+let expBucket = "dining";
+
+function renderMoney(){
+  const mk = monthKey();
+  const b = balances(state, mk);
+  $("moneyTotal").textContent = fmtMoney(b.total);
+  $("moneySub").textContent = monthLabel(mk) + " · " + fmtMoney(state.money.rate) + " per point";
+
+  $("diningBal").textContent = fmtMoney(b.dining);
+  $("diningMeta").textContent = "Base " + fmtMoney(state.money.diningBase) + " · spent " + fmtMoney(b.diningSpent);
+  $("diningBar").style.width = Math.min(100, Math.max(0, (b.dining / state.money.diningBase) * 100)) + "%";
+
+  $("funBal").textContent = fmtMoney(b.fun);
+  $("funMeta").textContent = "Earned " + fmtMoney(b.funEarned) + " · spent " + fmtMoney(b.funSpent);
+  const denom = Math.max(b.funEarned, 1);
+  $("funBar").style.width = Math.min(100, Math.max(0, (b.fun / denom) * 100)) + "%";
+
+  const m = ensureMonth(state, mk);
+  const all = [
+    ...m.dining.expenses.map(e => ({ ...e, bucket: "dining" })),
+    ...m.fun.expenses.map(e => ({ ...e, bucket: "fun" }))
+  ].sort((a, c) => (a.date < c.date ? 1 : -1));
+  const box = $("expList");
+  if (!all.length) { box.innerHTML = '<div class="empty">No expenses logged this month.</div>'; return; }
+  box.innerHTML = all.map(e => `
+    <div class="exp">
+      <div class="amt">${fmtMoney(e.amount)}</div>
+      <div class="what">
+        <div class="n">${e.bucket === "dining" ? "🍽️" : "🎉"} ${esc(e.note || (e.bucket === "dining" ? "Dining out" : "Pure fun"))}</div>
+        <div class="d">${esc(fmtDate(e.date))}</div>
+      </div>
+      <button class="icon-btn" data-expdel="${e.id}" data-bucket="${e.bucket}">🗑</button>
+    </div>`).join("");
+}
+
+function uiAddExpense(){
+  const ok = addExpense(state, expBucket, $("eAmt").value, $("eNote").value.trim());
+  if (!ok) { toast("Enter an amount first"); return; }
+  $("eAmt").value = ""; $("eNote").value = "";
+  save(); renderMoney();
+  toast("Expense logged ✓");
+}
+
+/* ================= UI: markets ================= */
+let lastQuotes = null;
+async function fetchMarkets(){
+  const list = $("marketList");
+  const syms = state.watchlist;
+  if (!syms.length) { list.innerHTML = '<div class="empty">Watchlist is empty — add a symbol below.</div>'; return; }
+  list.innerHTML = '<div class="muted">Loading prices…</div>';
+  try {
+    const q = syms.map(s => encodeURIComponent(s.toLowerCase()) + ".us").join(",");
+    const res = await fetch("https://stooq.com/q/l/?s=" + q + "&f=sd2t2ohlcv&h&e=csv");
+    if (!res.ok) throw new Error("http " + res.status);
+    const txt = await res.text();
+    const rows = txt.trim().split("\n").slice(1);
+    const quotes = rows.map(r => {
+      const c = r.split(",");
+      const sym = (c[0] || "").replace(/\.us$/i, "").toUpperCase();
+      const open = parseFloat(c[3]), close = parseFloat(c[6]);
+      return { sym, open, close, ok: isFinite(open) && isFinite(close) && open > 0 };
+    });
+    lastQuotes = quotes;
+    renderMarkets(quotes);
+    $("marketUpdated").textContent = "Updated " + new Date().toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" });
+  } catch (e) {
+    list.innerHTML = '<div class="empty">Couldn\'t load prices — check your connection and tap refresh.</div>';
+  }
+}
+function renderMarkets(quotes){
+  const list = $("marketList");
+  list.innerHTML = quotes.map(q => {
+    let px, chg;
+    if (q.ok) {
+      const pct = ((q.close - q.open) / q.open) * 100;
+      px = '<div class="p">' + q.close.toFixed(2) + "</div>";
+      const cls = pct > 0.005 ? "up" : pct < -0.005 ? "dn" : "flat";
+      const arrow = pct > 0.005 ? "▲" : pct < -0.005 ? "▼" : "•";
+      chg = '<div class="chg ' + cls + '">' + arrow + " " + Math.abs(pct).toFixed(2) + "%</div>";
+    } else {
+      px = '<div class="p" style="color:#aeaeb2">—</div>';
+      chg = '<div class="chg flat">n/a</div>';
+    }
+    return '<div class="mrow"><div class="sym">' + esc(q.sym) + '</div><div class="px">' + px + "</div>" + chg +
+      '<button class="icon-btn" data-symdel="' + esc(q.sym) + '">✕</button></div>';
+  }).join("");
+}
+function addSymbol(){
+  const s = $("mSym").value.trim().toUpperCase().replace(/[^A-Z.]/g, "");
+  if (!s) return;
+  if (!state.watchlist.includes(s)) state.watchlist.push(s);
+  $("mSym").value = "";
+  save(); fetchMarkets();
+}
+
+/* ================= UI: settings ================= */
+function loadSettings(){
+  $("sRate").value = state.money.rate;
+  $("sBase").value = state.money.diningBase;
+  document.querySelectorAll("#sRolloverSeg button").forEach(b =>
+    b.classList.toggle("sel", (b.dataset.v === "1") === state.money.rollover));
+}
+let rolloverSel = true;
+function saveSettings(){
+  const rate = parseFloat($("sRate").value);
+  const base = parseFloat($("sBase").value);
+  if (!(rate >= 0) || !(base >= 0)) { toast("Enter valid numbers"); return; }
+  state.money.rate = round2(rate);
+  state.money.diningBase = round2(base);
+  state.money.rollover = rolloverSel;
+  save(); loadSettings(); renderMoney(); renderDashboard();
+  toast("Settings saved ✓");
+}
+
+/* ================= tabs & events ================= */
+const TITLES = { todos: "Todos", money: "Fun money", markets: "Markets", settings: "Settings" };
+function switchTab(name){
+  document.querySelectorAll(".tabbar button").forEach(b => b.classList.toggle("active", b.dataset.tab === name));
+  document.querySelectorAll(".panel").forEach(p => p.classList.toggle("active", p.id === "panel-" + name));
+  $("pageTitle").textContent = TITLES[name];
+  if (name === "markets" && !lastQuotes) fetchMarkets();
+  window.scrollTo(0, 0);
+}
+
+function renderAll(){
+  rolloverWeekly(state);
+  renderDashboard();
+  renderTodos();
+  renderMoney();
+}
+
+/* ================= init ================= */
+$("dateLine").textContent = new Date().toLocaleDateString(undefined, { weekday: "long", month: "long", day: "numeric" });
+
+document.querySelectorAll(".tabbar button").forEach(b =>
+  b.addEventListener("click", () => switchTab(b.dataset.tab)));
+
+$("addBtn").addEventListener("click", addTodo);
+$("todoList").addEventListener("click", e => {
+  const btn = e.target.closest("[data-act]");
+  if (!btn) return;
+  const id = btn.dataset.id;
+  if (btn.dataset.act === "toggle") {
+    const pts = toggleTodo(state, id, todayStr());
+    save(); renderAll();
+    if (pts) toast("+" + pts + " pts · +" + fmtMoney(pts * state.money.rate) + " fun 🎉");
+  } else if (btn.dataset.act === "del") {
+    if (confirm("Delete this todo?")) {
+      state.todos = state.todos.filter(t => t.id !== id);
+      save(); renderTodos();
+    }
+  }
+});
+$("todoList").addEventListener("change", e => {
+  const inp = e.target.closest(".due-input");
+  if (!inp) return;
+  const t = state.todos.find(x => x.id === inp.dataset.id);
+  if (t) { t.due = inp.value; save(); renderTodos(); }
+});
+
+$("addExpBtn").addEventListener("click", uiAddExpense);
+$("eBucketSeg").addEventListener("click", e => {
+  const b = e.target.closest("button");
+  if (!b) return;
+  expBucket = b.dataset.b;
+  document.querySelectorAll("#eBucketSeg button").forEach(x => x.classList.toggle("sel", x === b));
+});
+$("expList").addEventListener("click", e => {
+  const btn = e.target.closest("[data-expdel]");
+  if (!btn) return;
+  deleteExpense(state, btn.dataset.bucket, btn.dataset.expdel);
+  save(); renderMoney();
+});
+
+$("addSymBtn").addEventListener("click", addSymbol);
+$("refreshBtn").addEventListener("click", fetchMarkets);
+$("marketList").addEventListener("click", e => {
+  const btn = e.target.closest("[data-symdel]");
+  if (!btn) return;
+  state.watchlist = state.watchlist.filter(s => s !== btn.dataset.symdel);
+  save(); fetchMarkets();
+});
+
+$("sRolloverSeg").addEventListener("click", e => {
+  const b = e.target.closest("button");
+  if (!b) return;
+  rolloverSel = b.dataset.v === "1";
+  document.querySelectorAll("#sRolloverSeg button").forEach(x => x.classList.toggle("sel", x === b));
+});
+$("saveSettingsBtn").addEventListener("click", saveSettings);
+$("resetBtn").addEventListener("click", () => {
+  if (confirm("Reset ALL data (todos, points, money, watchlist)? This cannot be undone.")) {
+    try { localStorage.removeItem(LS_KEY); } catch (e) {}
+    location.reload();
+  }
+});
+
+loadSettings();
+renderAll();
+fetchMarkets();
+</script>
+</body>
+</html>
