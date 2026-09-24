@@ -532,8 +532,8 @@ function addTodo(){
 }
 
 /* ================= import todos from a link =================
-   Link format: ?add=<title>&due=<YYYY-MM-DD>&notes=<text>
-   Repeat the trio for multiple todos: ?add=A&due=2026-10-05&add=B&due=2026-10-12
+   Link format: ?add=<title>&due=<YYYY-MM-DD>&notes=<text>&remove=<old title>
+   Repeat add-trios for multiple todos; repeat remove= for multiple removals.
    Values containing & or = must be percent-encoded. */
 function validDue(v){
   if (!/^\d{4}-\d{2}-\d{2}$/.test(v || "")) return "";
@@ -543,38 +543,49 @@ function validDue(v){
 function parseImportParams(search){
   const q = new URLSearchParams(search || "");
   const adds = q.getAll("add"), dues = q.getAll("due"), notes = q.getAll("notes");
-  const out = [];
+  const out = { add: [], remove: [] };
   for (let i = 0; i < adds.length; i++){
     const title = (adds[i] || "").trim().slice(0, 200);
     if (!title) continue;
-    out.push({ title, due: validDue(dues[i]), notes: (notes[i] || "").trim().slice(0, 300) });
+    out.add.push({ title, due: validDue(dues[i]), notes: (notes[i] || "").trim().slice(0, 300) });
+  }
+  for (const r of q.getAll("remove")){
+    const t = (r || "").trim().toLowerCase();
+    if (t) out.remove.push(t);
   }
   return out;
 }
 function importTodosFromURL(s, search){
   const items = parseImportParams(search);
-  if (!items.length) return 0;
-  let n = 0;
-  for (const it of items){
+  let removed = 0, added = 0;
+  if (items.remove.length){
+    const before = s.todos.length;
+    s.todos = s.todos.filter(t => !items.remove.includes(t.title.trim().toLowerCase()));
+    removed = before - s.todos.length;
+  }
+  for (const it of items.add){
     const dup = s.todos.some(t => !t.done &&
       t.title.trim().toLowerCase() === it.title.toLowerCase() && (t.due || "") === it.due);
     if (dup) continue;
     s.todos.push({ id: uid(), title: it.title, notes: it.notes, due: it.due, done: false });
-    n++;
+    added++;
   }
-  return n;
+  return { added, removed };
 }
 function cleanQueryString(){
   try { if (history.replaceState) history.replaceState(null, "", location.pathname + location.hash); } catch (e) {}
 }
 function consumeImportLink(){
-  const hasAdd = new URLSearchParams(location.search).has("add");
-  if (!hasAdd) return;
-  const n = importTodosFromURL(state, location.search);
-  if (n > 0) save();
+  const q = new URLSearchParams(location.search);
+  if (!q.has("add") && !q.has("remove")) return;
+  const res = importTodosFromURL(state, location.search);
+  if (res.added > 0 || res.removed > 0) save();
   cleanQueryString();
-  setTimeout(() => toast(n > 0
-    ? "Added " + n + " todo" + (n > 1 ? "s" : "") + " from link ✓"
+  const parts = [];
+  if (res.removed > 0) parts.push("removed " + res.removed);
+  if (res.added > 0) parts.push("added " + res.added + " todo" + (res.added > 1 ? "s" : ""));
+  setTimeout(() => toast(parts.length
+    ? parts.join(" · ") + " ✓"
     : "Those todos are already on your list"), 50);
 }
 
