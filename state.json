@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-09-25T06:06:26Z",
+ "generated_at": "2026-09-25T06:20:51Z",
  "todos": [
   {
    "title": "MS&E 226 HW 1",
@@ -27,16 +27,6 @@
    "ideal": "2026-09-27",
    "personal": "2026-09-27",
    "hard": "2026-09-28",
-   "done": false,
-   "done_date": "",
-   "points_awarded": null
-  },
-  {
-   "title": "STATS 118 homework",
-   "notes": "",
-   "ideal": "",
-   "personal": "",
-   "hard": "",
    "done": false,
    "done_date": "",
    "points_awarded": null
@@ -190,11 +180,101 @@
    "done": false,
    "done_date": "",
    "points_awarded": null
+  },
+  {
+   "title": "STATS 118 tutorial interest form",
+   "notes": "",
+   "ideal": "",
+   "personal": "",
+   "hard": "",
+   "done": true,
+   "done_date": "2026-09-24",
+   "points_awarded": 10
+  },
+  {
+   "title": "MS&E 226 Problem Set 2",
+   "notes": "Handed out Sep 22 \u00b7 due Mon 11:59pm",
+   "ideal": "2026-10-02",
+   "personal": "2026-10-04",
+   "hard": "2026-10-05",
+   "done": false,
+   "done_date": "",
+   "points_awarded": null
+  },
+  {
+   "title": "MS&E 226 Problem Set 3",
+   "notes": "Handed out Oct 5 \u00b7 due Mon 11:59pm",
+   "ideal": "2026-10-16",
+   "personal": "2026-10-18",
+   "hard": "2026-10-19",
+   "done": false,
+   "done_date": "",
+   "points_awarded": null
+  },
+  {
+   "title": "MS&E 226 Problem Set 4",
+   "notes": "Handed out Oct 29 \u00b7 due Mon 11:59pm",
+   "ideal": "2026-11-06",
+   "personal": "2026-11-08",
+   "hard": "2026-11-09",
+   "done": false,
+   "done_date": "",
+   "points_awarded": null
+  },
+  {
+   "title": "MS&E 226 Problem Set 5",
+   "notes": "Handed out Nov 9 \u00b7 due Mon 11:59pm",
+   "ideal": "2026-11-13",
+   "personal": "2026-11-15",
+   "hard": "2026-11-16",
+   "done": false,
+   "done_date": "",
+   "points_awarded": null
+  },
+  {
+   "title": "MS&E 226 project team registration",
+   "notes": "Due Fri 11:59pm PT",
+   "ideal": "2026-10-13",
+   "personal": "2026-10-15",
+   "hard": "2026-10-16",
+   "done": false,
+   "done_date": "",
+   "points_awarded": null
+  },
+  {
+   "title": "MS&E 226 project part 1",
+   "notes": "Due Wed 11:59pm PT",
+   "ideal": "2026-11-01",
+   "personal": "2026-11-03",
+   "hard": "2026-11-04",
+   "done": false,
+   "done_date": "",
+   "points_awarded": null
+  },
+  {
+   "title": "MS&E 226 project part 2",
+   "notes": "Due Wed 11:59pm PT",
+   "ideal": "2026-11-29",
+   "personal": "2026-12-01",
+   "hard": "2026-12-02",
+   "done": false,
+   "done_date": "",
+   "points_awarded": null
+  },
+  {
+   "title": "MS&E 226 oral presentation",
+   "notes": "Dec 3-4, exact slots announced Oct 19",
+   "ideal": "2026-12-03",
+   "personal": "2026-12-04",
+   "hard": "2026-12-04",
+   "done": false,
+   "done_date": "",
+   "points_awarded": null
   }
  ],
  "points": {
-  "lifetime": 80,
-  "weekly": 80,
+  "lifetime": 90,
+  "weekly": 90,
   "level": 1,
   "streak_current": 1,
   "streak_best": 1
@@ -205,8 +285,8 @@
   "month": "2026-09",
   "dining_left": 150.0,
   "dining_spent": 0.0,
-  "fun_balance": 8.0,
-  "fun_earned": 8.0,
+  "fun_balance": 9.0,
+  "fun_earned": 9.0,
   "fun_spent": 0.0,
   "expenses": []
  },

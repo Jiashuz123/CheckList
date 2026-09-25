@@ -6,114 +6,126 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="Dashboard">
-<meta name="theme-color" content="#f2f2f7">
-<title>My Dashboard</title>
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎮</text></svg>">
+<meta name="apple-mobile-web-app-title" content="Momentum">
+<meta name="theme-color" content="#f2f2f7" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#09090d" media="(prefers-color-scheme: dark)">
+<title>Momentum</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><defs><linearGradient id='g' x1='0' y1='0' x2='1' y2='1'><stop offset='0' stop-color='%235856D6'/><stop offset='1' stop-color='%23007AFF'/></linearGradient></defs><rect width='100' height='100' rx='24' fill='url(%23g)'/><path d='M55 10 L26 56 h18 L40 90 L74 42 h-20 Z' fill='white'/></svg>">
+<link rel="apple-touch-icon" href="apple-touch-icon.png"><text y='.9em' font-size='90'>🎮</text></svg>">
 <style>
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-  :root { color-scheme: light; }
+  :root {
+    color-scheme: light dark;
+    --bg: #f2f2f7; --card: #ffffff; --text: #1c1c1e;
+    --muted: #8e8e93; --muted2: #636366; --faint: #aeaeb2;
+    --fill: #e9e9ee; --border: #e5e5ea; --input-bg: #f9f9fb; --divider: #f0f0f4;
+    --check-border: #c7c7cc; --fill-active: #d9d9e0;
+    --accent: #007AFF; --accent-active: #0063d1; --accent2: #5856D6; --green: #34C759;
+    --shadow: 0 2px 14px rgba(0,0,0,0.08);
+    --tabbar-bg: rgba(255,255,255,0.94);
+    --toast: #1c1c1e; --toast-text: #ffffff;
+  }
   body {
     margin: 0;
     font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", sans-serif;
-    background: #f2f2f7; color: #1c1c1e;
+    background: var(--bg); color: var(--text);
     padding-bottom: calc(76px + env(safe-area-inset-bottom));
   }
   .wrap { max-width: 600px; margin: 0 auto; padding: 16px 16px 24px; }
   header { padding: 8px 4px 12px; }
   header h1 { font-size: 28px; margin: 0; letter-spacing: -0.5px; }
-  header .date { color: #8e8e93; font-size: 14px; margin-top: 4px; }
+  header .date { color: var(--muted); font-size: 14px; margin-top: 4px; }
 
-  .card { background: #fff; border-radius: 16px; padding: 16px; box-shadow: 0 1px 4px rgba(0,0,0,0.06); margin-bottom: 12px; }
+  .card { background: var(--card); border-radius: 16px; padding: 16px; box-shadow: var(--shadow); margin-bottom: 12px; }
   .section-title { font-size: 17px; font-weight: 700; margin: 20px 4px 10px; }
 
   /* dashboard (todos tab) */
   .dash-top { display: flex; align-items: center; gap: 14px; }
-  .level-badge { width: 64px; height: 64px; border-radius: 50%; background: linear-gradient(135deg, #007AFF, #5856D6); color: #fff; display: flex; flex-direction: column; align-items: center; justify-content: center; flex-shrink: 0; }
+  .level-badge { width: 64px; height: 64px; border-radius: 50%; background: linear-gradient(135deg, var(--accent), var(--accent2)); color: #fff; display: flex; flex-direction: column; align-items: center; justify-content: center; flex-shrink: 0; }
   .level-badge .lv { font-size: 10px; opacity: 0.85; text-transform: uppercase; letter-spacing: 1px; }
   .level-badge .num { font-size: 26px; font-weight: 700; line-height: 1; }
   .dash-meta { flex: 1; }
   .dash-meta .pts { font-size: 15px; font-weight: 600; }
-  .dash-meta .sub { font-size: 13px; color: #8e8e93; margin-top: 2px; }
-  .progress { height: 8px; background: #e9e9ee; border-radius: 99px; margin-top: 10px; overflow: hidden; }
-  .progress > div { height: 100%; background: linear-gradient(90deg, #007AFF, #5856D6); border-radius: 99px; transition: width 0.3s; }
+  .dash-meta .sub { font-size: 13px; color: var(--muted); margin-top: 2px; }
+  .progress { height: 8px; background: var(--fill); border-radius: 99px; margin-top: 10px; overflow: hidden; }
+  .progress > div { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent2)); border-radius: 99px; transition: width 0.3s; }
   .stats { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-  .stat { background: #fff; border-radius: 16px; padding: 14px 16px; box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
-  .stat .k { font-size: 12px; color: #8e8e93; text-transform: uppercase; letter-spacing: 0.5px; }
+  .stat { background: var(--card); border-radius: 16px; padding: 14px 16px; box-shadow: var(--shadow); }
+  .stat .k { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; }
   .stat .v { font-size: 22px; font-weight: 700; margin-top: 4px; }
-  .stat .v small { font-size: 13px; font-weight: 400; color: #8e8e93; }
+  .stat .v small { font-size: 13px; font-weight: 400; color: var(--muted); }
 
   /* todos */
-  .todo { background: #fff; border-radius: 14px; padding: 12px; box-shadow: 0 1px 4px rgba(0,0,0,0.06); margin-bottom: 8px; display: flex; gap: 12px; align-items: flex-start; }
+  .todo { background: var(--card); border-radius: 14px; padding: 12px; box-shadow: var(--shadow); margin-bottom: 8px; display: flex; gap: 12px; align-items: flex-start; }
   .todo.done { opacity: 0.55; }
   .todo.done .title { text-decoration: line-through; }
-  .check { width: 28px; height: 28px; min-width: 28px; border-radius: 50%; border: 2px solid #c7c7cc; background: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 16px; color: #fff; padding: 0; margin-top: 1px; }
-  .check.on { background: #34C759; border-color: #34C759; }
+  .check { width: 28px; height: 28px; min-width: 28px; border-radius: 50%; border: 2px solid var(--check-border); background: var(--card); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 16px; color: #fff; padding: 0; margin-top: 1px; }
+  .check.on { background: var(--green); border-color: var(--green); }
   .todo-body { flex: 1; min-width: 0; }
   .title { font-size: 16px; font-weight: 600; overflow-wrap: break-word; }
-  .notes { font-size: 13px; color: #8e8e93; margin-top: 3px; overflow-wrap: break-word; }
+  .notes { font-size: 13px; color: var(--muted); margin-top: 3px; overflow-wrap: break-word; }
   .row2 { display: flex; align-items: center; gap: 8px; margin-top: 8px; flex-wrap: wrap; }
-  .badge { font-size: 12px; font-weight: 600; padding: 3px 9px; border-radius: 99px; background: #e9e9ee; color: #636366; }
+  .badge { font-size: 12px; font-weight: 600; padding: 3px 9px; border-radius: 99px; background: var(--fill); color: var(--muted2); }
   .badge.overdue { background: #ffe5e5; color: #d70015; }
   .badge.today { background: #fff3df; color: #b25000; }
   .badge.soon { background: #e5f1ff; color: #0066cc; }
   .badge.worth { background: #e5f9ee; color: #0a7d3b; }
   .badge.worth.neg { background: #ffe5e5; color: #d70015; }
-  .due-input { font-size: 13px; border: 1px solid #e5e5ea; border-radius: 8px; padding: 6px 8px; color: #1c1c1e; background: #f9f9fb; min-height: 36px; }
-  .icon-btn { border: none; background: none; font-size: 17px; cursor: pointer; padding: 8px; min-width: 40px; min-height: 40px; color: #8e8e93; }
+  .due-input { font-size: 13px; border: 1px solid var(--border); border-radius: 8px; padding: 6px 8px; color: var(--text); background: var(--input-bg); min-height: 36px; }
+  .icon-btn { border: none; background: none; font-size: 17px; cursor: pointer; padding: 8px; min-width: 40px; min-height: 40px; color: var(--muted); }
   .icon-btn:active { color: #d70015; }
 
   /* forms */
   .field { margin-bottom: 10px; }
-  .field label { display: block; font-size: 13px; color: #8e8e93; margin-bottom: 5px; }
+  .field label { display: block; font-size: 13px; color: var(--muted); margin-bottom: 5px; }
   input[type="text"], input[type="date"], input[type="number"], select {
     width: 100%; font-size: 16px; padding: 11px 12px;
-    border: 1px solid #e5e5ea; border-radius: 12px; background: #f9f9fb; color: #1c1c1e;
+    border: 1px solid var(--border); border-radius: 12px; background: var(--input-bg); color: var(--text);
   }
   input:disabled { opacity: 0.55; }
-  .btn { width: 100%; min-height: 48px; border: none; border-radius: 14px; background: #007AFF; color: #fff; font-size: 17px; font-weight: 600; cursor: pointer; }
-  .btn:active { background: #0063d1; }
+  .btn { width: 100%; min-height: 48px; border: none; border-radius: 14px; background: var(--accent); color: #fff; font-size: 17px; font-weight: 600; cursor: pointer; }
+  .btn:active { background: var(--accent-active); }
   .btn:disabled { opacity: 0.5; }
   .btn.danger { background: #ff3b30; }
-  .btn.ghost { background: #e9e9ee; color: #007AFF; }
+  .btn.ghost { background: var(--fill); color: var(--accent); }
 
   /* money */
   .hero { text-align: center; padding: 20px 16px; }
-  .hero .k { font-size: 13px; color: #8e8e93; text-transform: uppercase; letter-spacing: 0.5px; }
+  .hero .k { font-size: 13px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; }
   .hero .v { font-size: 42px; font-weight: 800; letter-spacing: -1px; margin-top: 6px; }
-  .hero .sub { font-size: 13px; color: #8e8e93; margin-top: 6px; }
+  .hero .sub { font-size: 13px; color: var(--muted); margin-top: 6px; }
   .bucket { display: flex; align-items: center; gap: 12px; }
   .bucket .emoji { font-size: 32px; }
   .bucket .info { flex: 1; }
   .bucket .name { font-size: 16px; font-weight: 700; }
   .bucket .bal { font-size: 24px; font-weight: 800; margin-top: 2px; }
-  .bucket .meta { font-size: 12px; color: #8e8e93; margin-top: 4px; }
-  .bucket .bar { height: 6px; background: #e9e9ee; border-radius: 99px; margin-top: 8px; overflow: hidden; }
+  .bucket .meta { font-size: 12px; color: var(--muted); margin-top: 4px; }
+  .bucket .bar { height: 6px; background: var(--fill); border-radius: 99px; margin-top: 8px; overflow: hidden; }
   .bucket .bar > div { height: 100%; border-radius: 99px; }
-  .exp { display: flex; align-items: center; gap: 10px; padding: 10px 0; border-top: 1px solid #f0f0f4; }
+  .exp { display: flex; align-items: center; gap: 10px; padding: 10px 0; border-top: 1px solid var(--divider); }
   .exp:first-child { border-top: none; }
   .exp .amt { font-weight: 700; font-size: 15px; min-width: 70px; }
   .exp .what { flex: 1; min-width: 0; }
   .exp .what .n { font-size: 14px; overflow-wrap: break-word; }
-  .exp .what .d { font-size: 12px; color: #8e8e93; }
+  .exp .what .d { font-size: 12px; color: var(--muted); }
 
   /* calendar */
   .cal-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
   .cal-head .mtitle { font-size: 17px; font-weight: 700; }
-  .cal-nav { border: none; background: #e9e9ee; color: #007AFF; font-size: 18px; font-weight: 700; width: 40px; height: 40px; border-radius: 12px; cursor: pointer; }
-  .cal-nav:active { background: #d9d9e0; }
+  .cal-nav { border: none; background: var(--fill); color: var(--accent); font-size: 18px; font-weight: 700; width: 40px; height: 40px; border-radius: 12px; cursor: pointer; }
+  .cal-nav:active { background: var(--fill-active); }
   .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
-  .cal-dow { font-size: 11px; color: #8e8e93; text-align: center; padding: 4px 0; font-weight: 700; }
-  .cal-day { aspect-ratio: 1; border-radius: 10px; background: #f9f9fb; border: none; font-size: 14px; cursor: pointer; color: #1c1c1e; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px; padding: 0; font-family: inherit; }
-  .cal-day .cnt { font-size: 10px; font-weight: 700; color: #007AFF; line-height: 1; min-height: 10px; }
+  .cal-dow { font-size: 11px; color: var(--muted); text-align: center; padding: 4px 0; font-weight: 700; }
+  .cal-day { aspect-ratio: 1; border-radius: 10px; background: var(--input-bg); border: none; font-size: 14px; cursor: pointer; color: var(--text); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px; padding: 0; font-family: inherit; }
+  .cal-day .cnt { font-size: 10px; font-weight: 700; color: var(--accent); line-height: 1; min-height: 10px; }
   .cal-day.has { background: #e5f1ff; }
-  .cal-day.today { outline: 2px solid #007AFF; outline-offset: -2px; font-weight: 700; }
-  .cal-day.sel { background: #007AFF; color: #fff; font-weight: 700; }
+  .cal-day.today { outline: 2px solid var(--accent); outline-offset: -2px; font-weight: 700; }
+  .cal-day.sel { background: var(--accent); color: #fff; font-weight: 700; }
   .cal-day.sel .cnt { color: #fff; }
   .cal-day.blank { background: transparent; cursor: default; }
 
   /* markets */
-  .mrow { display: flex; align-items: center; gap: 10px; padding: 12px 0; border-top: 1px solid #f0f0f4; }
+  .mrow { display: flex; align-items: center; gap: 10px; padding: 12px 0; border-top: 1px solid var(--divider); }
   .mrow:first-child { border-top: none; }
   .mrow .sym { font-size: 17px; font-weight: 800; min-width: 76px; }
   .mrow .px { flex: 1; text-align: right; }
@@ -121,51 +133,87 @@
   .mrow .chg { font-size: 13px; font-weight: 600; padding: 2px 8px; border-radius: 99px; min-width: 70px; text-align: center; }
   .chg.up { background: #e5f9ee; color: #0a7d3b; }
   .chg.dn { background: #ffe5e5; color: #d70015; }
-  .chg.flat { background: #e9e9ee; color: #636366; }
-  .muted { color: #8e8e93; font-size: 13px; text-align: center; padding: 8px 0; }
+  .chg.flat { background: var(--fill); color: var(--muted2); }
+  .muted { color: var(--muted); font-size: 13px; text-align: center; padding: 8px 0; }
   .muted.left { text-align: left; line-height: 1.55; }
   .hint-emoji { font-size: 20px; }
 
-  .empty { text-align: center; color: #8e8e93; padding: 24px 0; font-size: 15px; }
-  .foot { text-align: center; color: #aeaeb2; font-size: 12px; margin-top: 18px; }
+  .empty { text-align: center; color: var(--muted); padding: 24px 0; font-size: 15px; }
+  .foot { text-align: center; color: var(--faint); font-size: 12px; margin-top: 18px; }
 
   /* tab bar */
   .tabbar {
     position: fixed; left: 0; right: 0; bottom: 0; z-index: 40;
-    background: rgba(255,255,255,0.94); backdrop-filter: blur(12px);
-    border-top: 1px solid #e5e5ea;
+    background: var(--tabbar-bg); backdrop-filter: blur(12px);
+    border-top: 1px solid var(--border);
     padding-bottom: env(safe-area-inset-bottom);
     display: flex;
   }
   .tabbar button {
     flex: 1; border: none; background: none; cursor: pointer;
-    padding: 8px 0 6px; font-size: 10px; color: #8e8e93;
+    padding: 8px 0 6px; font-size: 10px; color: var(--muted);
     display: flex; flex-direction: column; align-items: center; gap: 3px;
     min-height: 56px;
   }
   .tabbar button .te { font-size: 22px; }
-  .tabbar button.active { color: #007AFF; font-weight: 700; }
+  .tabbar button.active { color: var(--accent); font-weight: 700; }
   .panel { display: none; }
   .panel.active { display: block; }
 
   .seg { display: flex; gap: 8px; }
-  .seg button { flex: 1; min-height: 44px; border-radius: 12px; border: 1px solid #e5e5ea; background: #f9f9fb; font-size: 15px; font-weight: 600; cursor: pointer; color: #1c1c1e; }
-  .seg button.sel { background: #007AFF; border-color: #007AFF; color: #fff; }
+  .seg button { flex: 1; min-height: 44px; border-radius: 12px; border: 1px solid var(--border); background: var(--input-bg); font-size: 15px; font-weight: 600; cursor: pointer; color: var(--text); }
+  .seg button.sel { background: var(--accent); border-color: var(--accent); color: #fff; }
   .seg button:disabled { opacity: 0.5; }
 
   #toast {
     position: fixed; left: 50%; transform: translateX(-50%) translateY(20px);
     bottom: calc(100px + env(safe-area-inset-bottom));
-    background: #1c1c1e; color: #fff; font-size: 15px; font-weight: 600;
+    background: var(--toast); color: var(--toast-text); font-size: 15px; font-weight: 600;
     padding: 12px 20px; border-radius: 99px; opacity: 0; pointer-events: none;
     transition: opacity 0.25s, transform 0.25s; z-index: 50; max-width: 90vw; text-align: center;
   }
   #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  /* brand */
+  .brand {
+    font-size: 12px; font-weight: 800; letter-spacing: 3px; text-transform: uppercase;
+    margin: 2px 4px 4px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text; background-clip: text;
+    -webkit-text-fill-color: transparent; color: transparent;
+  }
+  .anytime-sub { font-size: 13px; color: var(--muted); margin: -4px 4px 10px; line-height: 1.5; }
+  .card { border-radius: 18px; }
+  .todo { border-radius: 16px; }
+  .tabbar button .te { transition: transform 0.15s; }
+  .tabbar button.active .te { transform: scale(1.12); }
+
+  /* dark mode */
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #09090d; --card: #17171d; --text: #f4f4f6;
+      --muted: #9c9ca6; --muted2: #bdbdc7; --faint: #6d6d78;
+      --fill: #26262e; --border: #34343e; --input-bg: #1f1f27; --divider: #26262e;
+      --check-border: #4c4c58; --fill-active: #34343e;
+      --accent: #0a84ff; --accent-active: #0a84ff; --accent2: #7d7aff; --green: #30d158;
+      --shadow: 0 2px 14px rgba(0,0,0,0.5);
+      --tabbar-bg: rgba(23,23,29,0.94);
+      --toast: #f4f4f6; --toast-text: #17171d;
+    }
+    .card, .stat, .todo { border: 1px solid var(--border); }
+    .badge.soon { background: #12283f; color: #7db8ff; }
+    .badge.worth { background: #0f2f1e; color: #5fd39a; }
+    .badge.today { background: #3a2a10; color: #f0b45a; }
+    .badge.overdue, .badge.worth.neg { background: #3d1414; color: #ff8a8a; }
+    .cal-day.has { background: #12283f; }
+    .level-badge { box-shadow: 0 0 18px rgba(125,122,255,0.35); }
+  }
 </style>
 </head>
 <body>
 <div class="wrap">
   <header>
+    <div class="brand">Momentum</div>
     <h1 id="pageTitle">Todos</h1>
     <div class="date" id="dateLine"></div>
   </header>
@@ -193,11 +241,16 @@
         Every todo is worth <b>10 base points</b>. Finish by your ideal date → <b>+25 bonus</b> (35 total).
         Between ideal and personal date the bonus shrinks each day. On the hard deadline day → <b>−15</b> (−5 total).
         After → <b>−20</b> (−10 total). Every point = <b>$0.10 Pure Fun</b>.<br>
-        <span style="color:#636366">Example: homework due Monday, ideal Friday, personal Sunday → Fri 35 · Sat 28 · Sun 20 · Mon −5 · later −10.</span>
+        <span style="color:var(--muted2)">Example: homework due Monday, ideal Friday, personal Sunday → Fri 35 · Sat 28 · Sun 20 · Mon −5 · later −10.</span>
       </div>
     </div>
     <div class="section-title">Today's todos</div>
     <div id="todoList"></div>
+    <div id="anytimeSection">
+      <div class="section-title">Anytime</div>
+      <div class="anytime-sub">No due date &mdash; worth a flat 10 pts whenever they&rsquo;re done. They never go overdue.</div>
+      <div id="anytimeList"></div>
+    </div>
     <div class="card" id="todoChatHint" style="display:none">
       <div class="muted left"><span class="hint-emoji">💬</span> Add or check off todos in chat or Apple Reminders — this page syncs automatically.</div>
     </div>
@@ -225,7 +278,7 @@
     </div>
     <div class="section-title" id="calDetailTitle">Today</div>
     <div class="card" id="calDetail"><div class="empty">Nothing on this day.</div></div>
-    <div class="section-title">No date — do anytime</div>
+    <div class="section-title">Anytime</div>
     <div class="card" id="calDateless"><div class="empty">Nothing dateless.</div></div>
     <div class="foot">Counts show dated todos active that day · tap a day for details</div>
   </div>
@@ -688,48 +741,61 @@ function dateBadges(t, today){
   return out.join("");
 }
 
-function renderSyncedTodos(box, today){
-  const list = SYNC.todos
-    .filter(t => visibleToday(t, today))
-    .sort((a, b) => {
-      if (!!a.done !== !!b.done) return a.done ? 1 : -1;
-      const ka = a.personal || a.ideal || "9999";
-      const kb = b.personal || b.ideal || "9999";
-      return ka < kb ? -1 : ka > kb ? 1 : 0;
-    });
-  if (!list.length) { box.innerHTML = '<div class="empty">Nothing on the list for today 🎯</div>'; return; }
-  box.innerHTML = list.map(t => {
-    let worthBadge;
-    if (t.done) {
-      worthBadge = t.points_awarded != null
-        ? '<span class="badge worth">+' + t.points_awarded + " pts ✓</span>"
-        : '<span class="badge">done ✓</span>';
-    } else {
-      const w = worthOn(t, today);
-      worthBadge = '<span class="badge worth' + (w < 10 ? " neg" : "") + '">worth ' + w + " pts</span>";
-    }
-    return '<div class="todo' + (t.done ? " done" : "") + '">' +
-      '<div class="todo-body">' +
-        '<div class="title">' + esc(t.title) + "</div>" +
-        (t.notes ? '<div class="notes">' + esc(t.notes) + "</div>" : "") +
-        '<div class="row2">' + dateBadges(t, today) + worthBadge + "</div>" +
-      "</div></div>";
-  }).join("");
+function syncedTodoCard(t, today){
+  let worthBadge;
+  if (t.done) {
+    worthBadge = t.points_awarded != null
+      ? '<span class="badge worth">+' + t.points_awarded + " pts \u2713</span>"
+      : '<span class="badge">done \u2713</span>';
+  } else {
+    const w = worthOn(t, today);
+    worthBadge = '<span class="badge worth' + (w < 10 ? " neg" : "") + '">worth ' + w + " pts</span>";
+  }
+  return '<div class="todo' + (t.done ? " done" : "") + '">' +
+    '<div class="todo-body">' +
+      '<div class="title">' + esc(t.title) + "</div>" +
+      (t.notes ? '<div class="notes">' + esc(t.notes) + "</div>" : "") +
+      '<div class="row2">' + dateBadges(t, today) + worthBadge + "</div>" +
+    "</div></div>";
+}
+function isAnytime(t){
+  return !t.ideal && !t.personal && !t.hard;
+}
+function renderSyncedTodos(today){
+  const dated = [], anytime = [];
+  SYNC.todos.forEach(t => {
+    if (t.done) { if (t.done_date === today) dated.push(t); return; }
+    if (isAnytime(t)) { anytime.push(t); return; }
+    if (visibleToday(t, today)) dated.push(t);
+  });
+  dated.sort((a, b) => {
+    if (!!a.done !== !!b.done) return a.done ? 1 : -1;
+    const ka = a.personal || a.ideal || "9999";
+    const kb = b.personal || b.ideal || "9999";
+    return ka < kb ? -1 : ka > kb ? 1 : 0;
+  });
+  $("todoList").innerHTML = dated.length
+    ? dated.map(t => syncedTodoCard(t, today)).join("")
+    : '<div class="empty">Nothing scheduled for today \uD83C\uDFAF</div>';
+  $("anytimeSection").style.display = anytime.length ? "" : "none";
+  $("anytimeList").innerHTML = anytime.map(t => syncedTodoCard(t, today)).join("");
 }
 
 function renderTodos(){
   const today = todayStr();
-  const box = $("todoList");
-  if (isSynced()) { renderSyncedTodos(box, today); return; }
-  if (!state.todos.length) { box.innerHTML = '<div class="empty">Nothing to do. Add one below 🎯</div>'; return; }
-  const sorted = [...state.todos].sort((a, b) => {
+  if (isSynced()) { renderSyncedTodos(today); return; }
+  if (!state.todos.length) {
+    $("todoList").innerHTML = '<div class="empty">Nothing to do. Add one below 🎯</div>';
+    $("anytimeSection").style.display = "none";
+    return;
+  }
+  const dated = state.todos.filter(t => t.due);
+  const anytime = state.todos.filter(t => !t.due);
+  const sorted = [...dated].sort((a, b) => {
     if (a.done !== b.done) return a.done ? 1 : -1;
-    if (!a.due && !b.due) return 0;
-    if (!a.due) return 1;
-    if (!b.due) return -1;
     return a.due < b.due ? -1 : 1;
   });
-  box.innerHTML = sorted.map(t => `
+  const card = t => `
     <div class="todo${t.done ? " done" : ""}">
       <button class="check${t.done ? " on" : ""}" data-act="toggle" data-id="${t.id}">${t.done ? "✓" : ""}</button>
       <div class="todo-body">
@@ -741,7 +807,12 @@ function renderTodos(){
           <button class="icon-btn" data-act="del" data-id="${t.id}" title="Delete">🗑</button>
         </div>
       </div>
-    </div>`).join("");
+    </div>`;
+  $("todoList").innerHTML = sorted.length
+    ? sorted.map(card).join("")
+    : '<div class="empty">Nothing scheduled for today 🎯</div>';
+  $("anytimeSection").style.display = anytime.length ? "" : "none";
+  $("anytimeList").innerHTML = anytime.map(card).join("");
 }
 
 function addTodo(){
@@ -977,7 +1048,7 @@ function renderMarkets(quotes){
       const arrow = pct > 0.005 ? "▲" : pct < -0.005 ? "▼" : "•";
       chg = '<div class="chg ' + cls + '">' + arrow + " " + Math.abs(pct).toFixed(2) + "%</div>";
     } else {
-      px = '<div class="p" style="color:#aeaeb2">—</div>';
+      px = '<div class="p" style="color:var(--faint)">—</div>';
       chg = '<div class="chg flat">n/a</div>';
     }
     return '<div class="mrow"><div class="sym">' + esc(q.sym) + '</div><div class="px">' + px + "</div>" + chg +
