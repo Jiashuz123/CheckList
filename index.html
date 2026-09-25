@@ -240,7 +240,7 @@
       <div class="muted left">
         Every todo is worth <b>10 base points</b>. Finish by your ideal date → <b>+25 bonus</b> (35 total).
         Between ideal and personal date the bonus shrinks each day. On the hard deadline day → <b>−15</b> (−5 total).
-        After → <b>−20</b> (−10 total). Every point = <b>$0.10 Pure Fun</b>.<br>
+        After → <b>−20</b> (−10 total). Every point = <b>$0.20 fun money</b>.<br>
         <span style="color:var(--muted2)">Example: homework due Monday, ideal Friday, personal Sunday → Fri 35 · Sat 28 · Sun 20 · Mon −5 · later −10.</span>
       </div>
     </div>
@@ -286,9 +286,22 @@
   <!-- MONEY -->
   <div class="panel" id="panel-money">
     <div class="card hero">
-      <div class="k">💰 Fun money available</div>
+      <div class="k">🎉 Fun money available</div>
       <div class="v" id="moneyTotal">$0.00</div>
       <div class="sub" id="moneySub"></div>
+    </div>
+    <div class="card">
+      <div class="bucket">
+        <div class="emoji">💳</div>
+        <div class="info">
+          <div class="name">Parents' card</div>
+          <div class="bal" id="parentsBal">$0.00</div>
+          <div class="meta" id="parentsMeta"></div>
+          <div class="bar"><div id="parentsBar" style="width:0%;background:#34C759"></div></div>
+          <div class="meta" id="parentsWeekMeta" style="margin-top:8px"></div>
+          <div class="bar"><div id="parentsWeekBar" style="width:0%;background:#30B0C7"></div></div>
+        </div>
+      </div>
     </div>
     <div class="card">
       <div class="bucket">
@@ -303,9 +316,20 @@
     </div>
     <div class="card">
       <div class="bucket">
+        <div class="emoji">🧰</div>
+        <div class="info">
+          <div class="name">Essentials</div>
+          <div class="bal" id="essBal">$0.00</div>
+          <div class="meta" id="essMeta"></div>
+          <div class="bar"><div id="essBar" style="width:0%;background:#AF52DE"></div></div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="bucket">
         <div class="emoji">🎉</div>
         <div class="info">
-          <div class="name">Pure fun</div>
+          <div class="name">Fun money</div>
           <div class="bal" id="funBal">$0.00</div>
           <div class="meta" id="funMeta"></div>
           <div class="bar"><div id="funBar" style="width:0%;background:#5856D6"></div></div>
@@ -318,8 +342,10 @@
         <div class="field"><label for="eAmt">Amount ($)</label><input type="number" id="eAmt" placeholder="0.00" min="0" step="0.01" inputmode="decimal"></div>
         <div class="field"><label>Bucket</label>
           <div class="seg" id="eBucketSeg">
+            <button data-b="parents">💳 Parents</button>
             <button data-b="dining" class="sel">🍽️ Dining</button>
-            <button data-b="fun">🎉 Pure fun</button>
+            <button data-b="essentials">🧰 Essentials</button>
+            <button data-b="fun">🎉 Fun</button>
           </div>
         </div>
         <div class="field"><label for="eNote">Note (optional)</label><input type="text" id="eNote" placeholder="e.g. Hot pot with friends" autocomplete="off"></div>
@@ -331,7 +357,7 @@
     </div>
     <div class="section-title">Recent expenses</div>
     <div class="card" id="expList"><div class="empty">No expenses logged this month.</div></div>
-    <div class="foot">Todo points convert to Pure Fun money at your rate (Settings).</div>
+    <div class="foot">Todo points convert to fun money at $0.20/pt. Budgets managed from chat.</div>
   </div>
 
   <!-- MARKETS -->
@@ -353,9 +379,9 @@
     <div class="section-title">Fun money rules</div>
     <div class="card">
       <div class="muted left" id="settingsSyncNote" style="display:none;margin-bottom:10px">🔄 Synced values — managed from chat.</div>
-      <div class="field"><label for="sRate">Dollars per todo point (e.g. 0.10 = 100 pts → $10)</label><input type="number" id="sRate" min="0" step="0.01" inputmode="decimal"></div>
-      <div class="field"><label for="sBase">Monthly dining-out base allowance ($)</label><input type="number" id="sBase" min="0" step="1" inputmode="decimal"></div>
-      <div class="field"><label>Unspent Pure Fun rolls over to next month</label>
+      <div class="field"><label for="sRate">Dollars per todo point (e.g. 0.20 = 100 pts → $20)</label><input type="number" id="sRate" min="0" step="0.01" inputmode="decimal"></div>
+      <div class="field"><label for="sBase">Monthly dining budget ($)</label><input type="number" id="sBase" min="0" step="1" inputmode="decimal"></div>
+      <div class="field"><label>Unspent fun money rolls over to next month</label>
         <div class="seg" id="sRolloverSeg">
           <button data-v="1" class="sel">On</button>
           <button data-v="0">Off</button>
@@ -483,9 +509,12 @@ function seedState(){
     streak: { current: 0, best: 0, lastDoneDate: "" },
     completions: {},
     money: {
-      rate: 0.10,
-      diningBase: 150,
+      rate: 0.20,
       rollover: true,
+      budgets: {
+        parentsMonthly: 1500, parentsWeekly: 400, personalMonthly: 1000,
+        dining: 500, funBase: 250, funTarget: 700, essentials: 250
+      },
       months: {}
     },
     watchlist: ["QQQ", "IQQ", "QQQM", "SPY"]
@@ -579,35 +608,59 @@ function applyMode(){
 }
 
 /* ================= money engine (offline fallback) ================= */
-function newDiningMonth(){ return { spent: 0, expenses: [] }; }
-function newFunMonth(){ return { earned: 0, spent: 0, carryIn: 0, expenses: [] }; }
+const DEFAULT_BUDGETS = {
+  parentsMonthly: 1500, parentsWeekly: 400, personalMonthly: 1000,
+  dining: 500, funBase: 250, funTarget: 700, essentials: 250
+};
+function newBudgetMonth(){ return { spent: 0, expenses: [] }; }
+function newFunMonth(){ return { base: 250, earned: 0, spent: 0, carryIn: 0, expenses: [] }; }
 
 function ensureMonth(s, mk){
   mk = mk || monthKey();
+  s.money.budgets = Object.assign({}, DEFAULT_BUDGETS, s.money.budgets || {});
   if (!s.money.months[mk]) {
-    const m = { dining: newDiningMonth(), fun: newFunMonth() };
+    const m = { parents: newBudgetMonth(), dining: newBudgetMonth(),
+                essentials: newBudgetMonth(), fun: newFunMonth() };
     const prev = s.money.months[prevMonth(mk)];
-    if (s.money.rollover && prev) {
-      m.fun.carryIn = round2(Math.max(0, prev.fun.earned + prev.fun.carryIn - prev.fun.spent));
+    if (s.money.rollover && prev && prev.fun) {
+      const pf = prev.fun;
+      m.fun.carryIn = round2(Math.max(0, (pf.base || 0) + pf.earned + pf.carryIn - pf.spent));
     }
     s.money.months[mk] = m;
+  } else {
+    const m = s.money.months[mk];
+    if (!m.parents) m.parents = newBudgetMonth();
+    if (!m.dining) m.dining = newBudgetMonth();
+    if (!m.essentials) m.essentials = newBudgetMonth();
+    if (!m.fun) m.fun = newFunMonth();
+    if (m.fun.base == null) m.fun.base = s.money.budgets.funBase;
   }
   return s.money.months[mk];
 }
 
+function weekSpent(expenses, ws){
+  return round2(expenses.reduce((a, e) => a + (e.date >= ws ? e.amount : 0), 0));
+}
+
 function balances(s, mk){
   const m = ensureMonth(s, mk || monthKey());
-  const dining = round2(s.money.diningBase - m.dining.spent);
-  const fun = round2(m.fun.earned + m.fun.carryIn - m.fun.spent);
+  const B = s.money.budgets;
+  const funAvail = round2(m.fun.base + m.fun.earned + m.fun.carryIn - m.fun.spent);
   return {
-    dining, fun, total: round2(dining + fun),
+    parentsSpent: round2(m.parents.spent),
+    parentsWeeklySpent: weekSpent(m.parents.expenses, weekStartStr()),
     diningSpent: round2(m.dining.spent),
+    diningLeft: round2(B.dining - m.dining.spent),
+    essentialsSpent: round2(m.essentials.spent),
+    essentialsLeft: round2(B.essentials - m.essentials.spent),
+    funBase: round2(m.fun.base),
     funEarned: round2(m.fun.earned + m.fun.carryIn),
-    funSpent: round2(m.fun.spent)
+    funSpent: round2(m.fun.spent),
+    funAvailable: funAvail
   };
 }
 
-/* credit dollars into Pure Fun when todo points are earned */
+/* credit dollars into fun money when todo points are earned */
 function creditPoints(s, pts, mk){
   const m = ensureMonth(s, mk || monthKey());
   m.fun.earned = round2(m.fun.earned + pts * s.money.rate);
@@ -615,7 +668,7 @@ function creditPoints(s, pts, mk){
 
 function addExpense(s, bucket, amount, note, date, mk){
   amount = round2(Number(amount));
-  if (!(amount > 0) || (bucket !== "dining" && bucket !== "fun")) return false;
+  if (!(amount > 0) || ["parents", "dining", "essentials", "fun"].indexOf(bucket) < 0) return false;
   const m = ensureMonth(s, mk || monthKey());
   m[bucket].expenses.unshift({ id: uid(), date: date || todayStr(), amount, note: note || "" });
   m[bucket].spent = round2(m[bucket].spent + amount);
@@ -939,35 +992,46 @@ function renderCalDetail(){
 
 /* ================= UI: money ================= */
 let expBucket = "dining";
+const BUCKET_EMOJI = { parents: "💳", dining: "🍽️", essentials: "🧰", fun: "🎉" };
+function barPct(used, cap){ return Math.min(100, Math.max(0, (used / Math.max(cap, 1)) * 100)) + "%"; }
 
 function renderMoney(){
   if (isSynced()) { renderSyncedMoney(); return; }
   const mk = monthKey();
   const b = balances(state, mk);
-  $("moneyTotal").textContent = fmtMoney(b.total);
-  $("moneySub").textContent = monthLabel(mk) + " · " + fmtMoney(state.money.rate) + " per point";
+  const B = state.money.budgets;
+  $("moneyTotal").textContent = fmtMoney(b.funAvailable);
+  $("moneySub").textContent = monthLabel(mk) + " · " + fmtMoney(state.money.rate) + " per point · target " + fmtMoney(B.funTarget);
 
-  $("diningBal").textContent = fmtMoney(b.dining);
-  $("diningMeta").textContent = "Base " + fmtMoney(state.money.diningBase) + " · spent " + fmtMoney(b.diningSpent);
-  $("diningBar").style.width = Math.min(100, Math.max(0, (b.dining / state.money.diningBase) * 100)) + "%";
+  $("parentsBal").textContent = fmtMoney(b.parentsSpent);
+  $("parentsMeta").textContent = "of " + fmtMoney(B.parentsMonthly) + " / month · left " + fmtMoney(B.parentsMonthly - b.parentsSpent);
+  $("parentsBar").style.width = barPct(b.parentsSpent, B.parentsMonthly);
+  $("parentsWeekMeta").textContent = "This week " + fmtMoney(b.parentsWeeklySpent) + " of " + fmtMoney(B.parentsWeekly);
+  $("parentsWeekBar").style.width = barPct(b.parentsWeeklySpent, B.parentsWeekly);
 
-  $("funBal").textContent = fmtMoney(b.fun);
-  $("funMeta").textContent = "Earned " + fmtMoney(b.funEarned) + " · spent " + fmtMoney(b.funSpent);
-  const denom = Math.max(b.funEarned, 1);
-  $("funBar").style.width = Math.min(100, Math.max(0, (b.fun / denom) * 100)) + "%";
+  $("diningBal").textContent = fmtMoney(b.diningSpent);
+  $("diningMeta").textContent = "of " + fmtMoney(B.dining) + " · left " + fmtMoney(b.diningLeft);
+  $("diningBar").style.width = barPct(b.diningSpent, B.dining);
+
+  $("essBal").textContent = fmtMoney(b.essentialsSpent);
+  $("essMeta").textContent = "of " + fmtMoney(B.essentials) + " · left " + fmtMoney(b.essentialsLeft);
+  $("essBar").style.width = barPct(b.essentialsSpent, B.essentials);
+
+  $("funBal").textContent = fmtMoney(b.funAvailable);
+  $("funMeta").textContent = "Base " + fmtMoney(b.funBase) + " + earned " + fmtMoney(b.funEarned) + " − spent " + fmtMoney(b.funSpent);
+  $("funBar").style.width = barPct(b.funAvailable, B.funTarget);
 
   const m = ensureMonth(state, mk);
-  const all = [
-    ...m.dining.expenses.map(e => ({ ...e, bucket: "dining" })),
-    ...m.fun.expenses.map(e => ({ ...e, bucket: "fun" }))
-  ].sort((a, c) => (a.date < c.date ? 1 : -1));
+  const all = ["parents", "dining", "essentials", "fun"].reduce(
+    (a, bk) => a.concat(m[bk].expenses.map(e => ({ ...e, bucket: bk }))), [])
+    .sort((a, c) => (a.date < c.date ? 1 : -1));
   const box = $("expList");
   if (!all.length) { box.innerHTML = '<div class="empty">No expenses logged this month.</div>'; return; }
   box.innerHTML = all.map(e => `
     <div class="exp">
       <div class="amt">${fmtMoney(e.amount)}</div>
       <div class="what">
-        <div class="n">${e.bucket === "dining" ? "🍽️" : "🎉"} ${esc(e.note || (e.bucket === "dining" ? "Dining out" : "Pure fun"))}</div>
+        <div class="n">${BUCKET_EMOJI[e.bucket] || "💳"} ${esc(e.note || e.bucket)}</div>
         <div class="d">${esc(fmtDate(e.date))}</div>
       </div>
       <button class="icon-btn" data-expdel="${e.id}" data-bucket="${e.bucket}">🗑</button>
@@ -976,19 +1040,31 @@ function renderMoney(){
 
 function renderSyncedMoney(){
   const m = SYNC.money;
-  const total = round2((m.fun_balance || 0) + (m.dining_left || 0));
-  $("moneyTotal").textContent = fmtMoney(total);
-  $("moneySub").textContent = monthLabel(m.month || monthKey()) + " · " + fmtMoney(m.rate || 0) + " per point";
+  const B = m.budgets || {};
+  const pCap = B.parentsMonthly || 1500, pWCap = B.parentsWeekly || 400;
+  const dCap = m.dining_cap || 500, eCap = m.essentials_cap || 250;
+  const fTgt = m.fun_target || 700;
 
-  $("diningBal").textContent = fmtMoney(m.dining_left || 0);
-  $("diningMeta").textContent = "Base " + fmtMoney(m.dining_base || 0) + " · spent " + fmtMoney(m.dining_spent || 0);
-  const dBase = m.dining_base || 1;
-  $("diningBar").style.width = Math.min(100, Math.max(0, ((m.dining_left || 0) / dBase) * 100)) + "%";
+  $("moneyTotal").textContent = fmtMoney(m.fun_available || 0);
+  $("moneySub").textContent = monthLabel(m.month || monthKey()) + " · " + fmtMoney(m.rate || 0) + " per point · target " + fmtMoney(fTgt);
 
-  $("funBal").textContent = fmtMoney(m.fun_balance || 0);
-  $("funMeta").textContent = "Earned " + fmtMoney(m.fun_earned || 0) + " · spent " + fmtMoney(m.fun_spent || 0);
-  const fDen = Math.max(m.fun_earned || 0, 1);
-  $("funBar").style.width = Math.min(100, Math.max(0, ((m.fun_balance || 0) / fDen) * 100)) + "%";
+  $("parentsBal").textContent = fmtMoney(m.parents_spent || 0);
+  $("parentsMeta").textContent = "of " + fmtMoney(pCap) + " / month · left " + fmtMoney(pCap - (m.parents_spent || 0));
+  $("parentsBar").style.width = barPct(m.parents_spent || 0, pCap);
+  $("parentsWeekMeta").textContent = "This week " + fmtMoney(m.parents_weekly_spent || 0) + " of " + fmtMoney(pWCap);
+  $("parentsWeekBar").style.width = barPct(m.parents_weekly_spent || 0, pWCap);
+
+  $("diningBal").textContent = fmtMoney(m.dining_spent || 0);
+  $("diningMeta").textContent = "of " + fmtMoney(dCap) + " · left " + fmtMoney(dCap - (m.dining_spent || 0));
+  $("diningBar").style.width = barPct(m.dining_spent || 0, dCap);
+
+  $("essBal").textContent = fmtMoney(m.essentials_spent || 0);
+  $("essMeta").textContent = "of " + fmtMoney(eCap) + " · left " + fmtMoney(eCap - (m.essentials_spent || 0));
+  $("essBar").style.width = barPct(m.essentials_spent || 0, eCap);
+
+  $("funBal").textContent = fmtMoney(m.fun_available || 0);
+  $("funMeta").textContent = "Base " + fmtMoney(m.fun_base || 0) + " + earned " + fmtMoney(m.fun_earned || 0) + " − spent " + fmtMoney(m.fun_spent || 0);
+  $("funBar").style.width = barPct(m.fun_available || 0, fTgt);
 
   const all = Array.isArray(m.expenses) ? m.expenses : [];
   const box = $("expList");
@@ -997,7 +1073,7 @@ function renderSyncedMoney(){
     <div class="exp">
       <div class="amt">${fmtMoney(e.amount)}</div>
       <div class="what">
-        <div class="n">${e.bucket === "dining" ? "🍽️" : "🎉"} ${esc(e.note || (e.bucket === "dining" ? "Dining out" : "Pure fun"))}</div>
+        <div class="n">${BUCKET_EMOJI[e.bucket] || "💳"} ${esc(e.note || e.bucket)}</div>
         <div class="d">${esc(fmtDate(e.date))}</div>
       </div>
     </div>`).join("");
@@ -1066,12 +1142,12 @@ function addSymbol(){
 /* ================= UI: settings ================= */
 function loadSettings(){
   const m = isSynced()
-    ? { rate: SYNC.money.rate, diningBase: SYNC.money.dining_base }
-    : state.money;
+    ? { rate: SYNC.money.rate, diningCap: (SYNC.money.budgets || {}).dining, rollover: state.money.rollover }
+    : { rate: state.money.rate, diningCap: (state.money.budgets || {}).dining, rollover: state.money.rollover };
   $("sRate").value = m.rate;
-  $("sBase").value = m.diningBase;
+  $("sBase").value = m.diningCap;
   document.querySelectorAll("#sRolloverSeg button").forEach(b =>
-    b.classList.toggle("sel", (b.dataset.v === "1") === state.money.rollover));
+    b.classList.toggle("sel", (b.dataset.v === "1") === m.rollover));
 }
 let rolloverSel = true;
 function saveSettings(){
@@ -1079,7 +1155,8 @@ function saveSettings(){
   const base = parseFloat($("sBase").value);
   if (!(rate >= 0) || !(base >= 0)) { toast("Enter valid numbers"); return; }
   state.money.rate = round2(rate);
-  state.money.diningBase = round2(base);
+  state.money.budgets = state.money.budgets || {};
+  state.money.budgets.dining = round2(base);
   state.money.rollover = rolloverSel;
   save(); loadSettings(); renderMoney(); renderDashboard();
   toast("Settings saved ✓");

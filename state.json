@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-09-25T06:20:51Z",
+ "generated_at": "2026-09-25T06:57:18Z",
  "todos": [
   {
    "title": "MS&E 226 HW 1",
@@ -280,15 +280,100 @@
   "streak_best": 1
  },
  "money": {
-  "rate": 0.1,
-  "dining_base": 150.0,
+  "rate": 0.2,
   "month": "2026-09",
-  "dining_left": 150.0,
+  "budgets": {
+   "parentsMonthly": 1500.0,
+   "parentsWeekly": 400.0,
+   "personalMonthly": 1000.0,
+   "dining": 500.0,
+   "funBase": 250.0,
+   "funTarget": 700.0,
+   "essentials": 250.0
+  },
+  "parents_spent": 159.91,
+  "parents_weekly_spent": 159.91,
+  "dining_cap": 500.0,
   "dining_spent": 0.0,
-  "fun_balance": 9.0,
+  "essentials_cap": 250.0,
+  "essentials_spent": 0.0,
+  "fun_base": 250.0,
   "fun_earned": 9.0,
   "fun_spent": 0.0,
-  "expenses": []
+  "fun_available": 259.0,
+  "fun_target": 700.0,
+  "expenses": [
+   {
+    "date": "2026-09-24",
+    "bucket": "parents",
+    "cat": "dining",
+    "amount": 14.59,
+    "note": "Subway"
+   },
+   {
+    "date": "2026-09-24",
+    "bucket": "parents",
+    "cat": "dining",
+    "amount": 17.32,
+    "note": "DoorDash"
+   },
+   {
+    "date": "2026-09-23",
+    "bucket": "parents",
+    "cat": "essentials",
+    "amount": 25.0,
+    "note": "Stanford ID Card Office"
+   },
+   {
+    "date": "2026-09-23",
+    "bucket": "parents",
+    "cat": "essentials",
+    "amount": 10.92,
+    "note": "Crate & Barrel"
+   },
+   {
+    "date": "2026-09-22",
+    "bucket": "parents",
+    "cat": "essentials",
+    "amount": 15.35,
+    "note": "Hassett ACE Hardware"
+   },
+   {
+    "date": "2026-09-22",
+    "bucket": "parents",
+    "cat": "essentials",
+    "amount": 21.94,
+    "note": "CVS Pharmacy"
+   },
+   {
+    "date": "2026-09-22",
+    "bucket": "parents",
+    "cat": "essentials",
+    "amount": 27.15,
+    "note": "Uber"
+   },
+   {
+    "date": "2026-09-21",
+    "bucket": "parents",
+    "cat": "essentials",
+    "amount": 3.59,
+    "note": "76"
+   },
+   {
+    "date": "2026-09-21",
+    "bucket": "parents",
+    "cat": "essentials",
+    "amount": 4.52,
+    "note": "Uber"
+   },
+   {
+    "date": "2026-09-21",
+    "bucket": "parents",
+    "cat": "dining",
+    "amount": 19.53,
+    "note": "DoorDash"
+   }
+  ]
  },
- "rules_text": "Base 10 pts per todo. Finish by your ideal date: +25 bonus (35 total). Between ideal and personal date the bonus shrinks daily. On the hard deadline day: -15 (-5 total). After: -20 (-10 total). Every point = $0.10 Pure Fun."
+ "rules_text": "Base 10 pts per todo. Finish by your ideal date: +25 bonus (35 total). Between ideal and personal date the bonus shrinks daily. On the hard deadline day: -15 (-5 total). After: -20 (-10 total). Every point = $0.20 fun money."
 }
