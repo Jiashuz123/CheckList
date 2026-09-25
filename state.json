@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-09-25T19:00:33Z",
+ "generated_at": "2026-09-25T20:39:54Z",
  "todos": [
   {
    "title": "MS&E 226 HW 1",
@@ -297,6 +297,16 @@
    "ideal": "2026-10-05",
    "personal": "2026-10-07",
    "hard": "2026-10-09",
+   "done": false,
+   "done_date": "",
+   "points_awarded": null
+  },
+  {
+   "title": "Watch a CS103 video lecture",
+   "notes": "",
+   "ideal": "2026-09-26",
+   "personal": "2026-09-27",
+   "hard": "2026-09-28",
    "done": false,
    "done_date": "",
    "points_awarded": null
