@@ -1,0 +1,214 @@
+{
+ "generated_at": "2026-09-25T06:06:26Z",
+ "todos": [
+  {
+   "title": "MS&E 226 HW 1",
+   "notes": "",
+   "ideal": "2026-09-25",
+   "personal": "2026-09-25",
+   "hard": "2026-09-28",
+   "done": true,
+   "done_date": "2026-09-24",
+   "points_awarded": 35
+  },
+  {
+   "title": "CS103 problem set",
+   "notes": "",
+   "ideal": "2026-09-25",
+   "personal": "2026-09-25",
+   "hard": "",
+   "done": true,
+   "done_date": "2026-09-24",
+   "points_awarded": 35
+  },
+  {
+   "title": "Find CS148 check-in Zoom link",
+   "notes": "",
+   "ideal": "2026-09-27",
+   "personal": "2026-09-27",
+   "hard": "2026-09-28",
+   "done": false,
+   "done_date": "",
+   "points_awarded": null
+  },
+  {
+   "title": "STATS 118 homework",
+   "notes": "",
+   "ideal": "",
+   "personal": "",
+   "hard": "",
+   "done": false,
+   "done_date": "",
+   "points_awarded": null
+  },
+  {
+   "title": "Watch a STATS 118 lecture",
+   "notes": "",
+   "ideal": "",
+   "personal": "",
+   "hard": "",
+   "done": true,
+   "done_date": "2026-09-24",
+   "points_awarded": 10
+  },
+  {
+   "title": "Handshake P&G apply/question",
+   "notes": "",
+   "ideal": "",
+   "personal": "",
+   "hard": "",
+   "done": false,
+   "done_date": "",
+   "points_awarded": null
+  },
+  {
+   "title": "message francois levy",
+   "notes": "",
+   "ideal": "",
+   "personal": "",
+   "hard": "",
+   "done": false,
+   "done_date": "",
+   "points_awarded": null
+  },
+  {
+   "title": "Tyler Smith cisco intern",
+   "notes": "",
+   "ideal": "",
+   "personal": "",
+   "hard": "",
+   "done": false,
+   "done_date": "",
+   "points_awarded": null
+  },
+  {
+   "title": "Omen trade prop football trader research",
+   "notes": "",
+   "ideal": "",
+   "personal": "",
+   "hard": "",
+   "done": false,
+   "done_date": "",
+   "points_awarded": null
+  },
+  {
+   "title": "Minsheng bank transfer",
+   "notes": "",
+   "ideal": "",
+   "personal": "",
+   "hard": "",
+   "done": false,
+   "done_date": "",
+   "points_awarded": null
+  },
+  {
+   "title": "Study STATS 118 chapter 17",
+   "notes": "",
+   "ideal": "2026-09-25",
+   "personal": "2026-09-25",
+   "hard": "",
+   "done": false,
+   "done_date": "",
+   "points_awarded": null
+  },
+  {
+   "title": "Study STATS 118 chapter 20",
+   "notes": "",
+   "ideal": "2026-09-26",
+   "personal": "2026-09-26",
+   "hard": "",
+   "done": false,
+   "done_date": "",
+   "points_awarded": null
+  },
+  {
+   "title": "Study STATS 118 chapter 21",
+   "notes": "",
+   "ideal": "2026-09-27",
+   "personal": "2026-09-27",
+   "hard": "",
+   "done": false,
+   "done_date": "",
+   "points_awarded": null
+  },
+  {
+   "title": "Study STATS 118 chapter 22",
+   "notes": "",
+   "ideal": "2026-09-29",
+   "personal": "2026-09-29",
+   "hard": "",
+   "done": false,
+   "done_date": "",
+   "points_awarded": null
+  },
+  {
+   "title": "Study STATS 118 chapter 23",
+   "notes": "",
+   "ideal": "2026-09-30",
+   "personal": "2026-09-30",
+   "hard": "",
+   "done": false,
+   "done_date": "",
+   "points_awarded": null
+  },
+  {
+   "title": "Study STATS 118 chapter 24",
+   "notes": "",
+   "ideal": "2026-10-01",
+   "personal": "2026-10-01",
+   "hard": "",
+   "done": false,
+   "done_date": "",
+   "points_awarded": null
+  },
+  {
+   "title": "Study STATS 118 chapter 25",
+   "notes": "",
+   "ideal": "2026-10-02",
+   "personal": "2026-10-02",
+   "hard": "",
+   "done": false,
+   "done_date": "",
+   "points_awarded": null
+  },
+  {
+   "title": "Study STATS 118 chapter 26",
+   "notes": "",
+   "ideal": "2026-10-04",
+   "personal": "2026-10-04",
+   "hard": "",
+   "done": false,
+   "done_date": "",
+   "points_awarded": null
+  },
+  {
+   "title": "Study STATS 118 chapter 27",
+   "notes": "",
+   "ideal": "2026-10-05",
+   "personal": "2026-10-05",
+   "hard": "",
+   "done": false,
+   "done_date": "",
+   "points_awarded": null
+  }
+ ],
+ "points": {
+  "lifetime": 80,
+  "weekly": 80,
+  "level": 1,
+  "streak_current": 1,
+  "streak_best": 1
+ },
+ "money": {
+  "rate": 0.1,
+  "dining_base": 150.0,
+  "month": "2026-09",
+  "dining_left": 150.0,
+  "dining_spent": 0.0,
+  "fun_balance": 8.0,
+  "fun_earned": 8.0,
+  "fun_spent": 0.0,
+  "expenses": []
+ },
+ "rules_text": "Base 10 pts per todo. Finish by your ideal date: +25 bonus (35 total). Between ideal and personal date the bonus shrinks daily. On the hard deadline day: -15 (-5 total). After: -20 (-10 total). Every point = $0.10 Pure Fun."
+}

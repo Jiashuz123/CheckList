@@ -57,6 +57,8 @@
   .badge.overdue { background: #ffe5e5; color: #d70015; }
   .badge.today { background: #fff3df; color: #b25000; }
   .badge.soon { background: #e5f1ff; color: #0066cc; }
+  .badge.worth { background: #e5f9ee; color: #0a7d3b; }
+  .badge.worth.neg { background: #ffe5e5; color: #d70015; }
   .due-input { font-size: 13px; border: 1px solid #e5e5ea; border-radius: 8px; padding: 6px 8px; color: #1c1c1e; background: #f9f9fb; min-height: 36px; }
   .icon-btn { border: none; background: none; font-size: 17px; cursor: pointer; padding: 8px; min-width: 40px; min-height: 40px; color: #8e8e93; }
   .icon-btn:active { color: #d70015; }
@@ -68,8 +70,10 @@
     width: 100%; font-size: 16px; padding: 11px 12px;
     border: 1px solid #e5e5ea; border-radius: 12px; background: #f9f9fb; color: #1c1c1e;
   }
+  input:disabled { opacity: 0.55; }
   .btn { width: 100%; min-height: 48px; border: none; border-radius: 14px; background: #007AFF; color: #fff; font-size: 17px; font-weight: 600; cursor: pointer; }
   .btn:active { background: #0063d1; }
+  .btn:disabled { opacity: 0.5; }
   .btn.danger { background: #ff3b30; }
   .btn.ghost { background: #e9e9ee; color: #007AFF; }
 
@@ -93,6 +97,21 @@
   .exp .what .n { font-size: 14px; overflow-wrap: break-word; }
   .exp .what .d { font-size: 12px; color: #8e8e93; }
 
+  /* calendar */
+  .cal-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+  .cal-head .mtitle { font-size: 17px; font-weight: 700; }
+  .cal-nav { border: none; background: #e9e9ee; color: #007AFF; font-size: 18px; font-weight: 700; width: 40px; height: 40px; border-radius: 12px; cursor: pointer; }
+  .cal-nav:active { background: #d9d9e0; }
+  .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
+  .cal-dow { font-size: 11px; color: #8e8e93; text-align: center; padding: 4px 0; font-weight: 700; }
+  .cal-day { aspect-ratio: 1; border-radius: 10px; background: #f9f9fb; border: none; font-size: 14px; cursor: pointer; color: #1c1c1e; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px; padding: 0; font-family: inherit; }
+  .cal-day .cnt { font-size: 10px; font-weight: 700; color: #007AFF; line-height: 1; min-height: 10px; }
+  .cal-day.has { background: #e5f1ff; }
+  .cal-day.today { outline: 2px solid #007AFF; outline-offset: -2px; font-weight: 700; }
+  .cal-day.sel { background: #007AFF; color: #fff; font-weight: 700; }
+  .cal-day.sel .cnt { color: #fff; }
+  .cal-day.blank { background: transparent; cursor: default; }
+
   /* markets */
   .mrow { display: flex; align-items: center; gap: 10px; padding: 12px 0; border-top: 1px solid #f0f0f4; }
   .mrow:first-child { border-top: none; }
@@ -104,6 +123,8 @@
   .chg.dn { background: #ffe5e5; color: #d70015; }
   .chg.flat { background: #e9e9ee; color: #636366; }
   .muted { color: #8e8e93; font-size: 13px; text-align: center; padding: 8px 0; }
+  .muted.left { text-align: left; line-height: 1.55; }
+  .hint-emoji { font-size: 20px; }
 
   .empty { text-align: center; color: #8e8e93; padding: 24px 0; font-size: 15px; }
   .foot { text-align: center; color: #aeaeb2; font-size: 12px; margin-top: 18px; }
@@ -130,6 +151,7 @@
   .seg { display: flex; gap: 8px; }
   .seg button { flex: 1; min-height: 44px; border-radius: 12px; border: 1px solid #e5e5ea; background: #f9f9fb; font-size: 15px; font-weight: 600; cursor: pointer; color: #1c1c1e; }
   .seg button.sel { background: #007AFF; border-color: #007AFF; color: #fff; }
+  .seg button:disabled { opacity: 0.5; }
 
   #toast {
     position: fixed; left: 50%; transform: translateX(-50%) translateY(20px);
@@ -165,19 +187,50 @@
       <div class="stat"><div class="k">🔥 Streak</div><div class="v" id="streakNow">0 <small>days</small></div></div>
       <div class="stat"><div class="k">🏆 Best streak</div><div class="v" id="streakBest">0 <small>days</small></div></div>
     </div>
+    <div class="section-title">How points work</div>
+    <div class="card">
+      <div class="muted left">
+        Every todo is worth <b>10 base points</b>. Finish by your ideal date → <b>+25 bonus</b> (35 total).
+        Between ideal and personal date the bonus shrinks each day. On the hard deadline day → <b>−15</b> (−5 total).
+        After → <b>−20</b> (−10 total). Every point = <b>$0.10 Pure Fun</b>.<br>
+        <span style="color:#636366">Example: homework due Monday, ideal Friday, personal Sunday → Fri 35 · Sat 28 · Sun 20 · Mon −5 · later −10.</span>
+      </div>
+    </div>
     <div class="section-title">Today's todos</div>
     <div id="todoList"></div>
-    <div class="section-title">Add a todo</div>
-    <div class="card">
-      <div class="field"><label for="fTitle">Title</label><input type="text" id="fTitle" placeholder="e.g. Finish problem set 3" autocomplete="off"></div>
-      <div class="field"><label for="fDue">Due date (optional)</label><input type="date" id="fDue"></div>
-      <div class="field"><label for="fNotes">Notes (optional)</label><input type="text" id="fNotes" placeholder="Anything to remember" autocomplete="off"></div>
-      <button class="btn" id="addBtn">Add todo</button>
+    <div class="card" id="todoChatHint" style="display:none">
+      <div class="muted left"><span class="hint-emoji">💬</span> Add or check off todos in chat or Apple Reminders — this page syncs automatically.</div>
     </div>
-    <div class="foot">10 pts per todo · +5 if done on time · level up every 100 pts</div>
+    <div id="addTodoWrap">
+      <div class="section-title">Add a todo</div>
+      <div class="card">
+        <div class="field"><label for="fTitle">Title</label><input type="text" id="fTitle" placeholder="e.g. Finish problem set 3" autocomplete="off"></div>
+        <div class="field"><label for="fDue">Due date (optional)</label><input type="date" id="fDue"></div>
+        <div class="field"><label for="fNotes">Notes (optional)</label><input type="text" id="fNotes" placeholder="Anything to remember" autocomplete="off"></div>
+        <button class="btn" id="addBtn">Add todo</button>
+      </div>
+    </div>
+    <div class="foot">Base 10 pts · ideal +25 · personal → shrinking · hard day −15 · after −20 · level up every 100 pts</div>
   </div>
 
-  <!-- FUN MONEY -->
+  <!-- CALENDAR -->
+  <div class="panel" id="panel-calendar">
+    <div class="card">
+      <div class="cal-head">
+        <button class="cal-nav" id="calPrev" aria-label="Previous month">‹</button>
+        <div class="mtitle" id="calTitle"></div>
+        <button class="cal-nav" id="calNext" aria-label="Next month">›</button>
+      </div>
+      <div class="cal-grid" id="calGrid"></div>
+    </div>
+    <div class="section-title" id="calDetailTitle">Today</div>
+    <div class="card" id="calDetail"><div class="empty">Nothing on this day.</div></div>
+    <div class="section-title">No date — do anytime</div>
+    <div class="card" id="calDateless"><div class="empty">Nothing dateless.</div></div>
+    <div class="foot">Counts show dated todos active that day · tap a day for details</div>
+  </div>
+
+  <!-- MONEY -->
   <div class="panel" id="panel-money">
     <div class="card hero">
       <div class="k">💰 Fun money available</div>
@@ -206,17 +259,22 @@
         </div>
       </div>
     </div>
-    <div class="section-title">Log an expense</div>
-    <div class="card">
-      <div class="field"><label for="eAmt">Amount ($)</label><input type="number" id="eAmt" placeholder="0.00" min="0" step="0.01" inputmode="decimal"></div>
-      <div class="field"><label>Bucket</label>
-        <div class="seg" id="eBucketSeg">
-          <button data-b="dining" class="sel">🍽️ Dining</button>
-          <button data-b="fun">🎉 Pure fun</button>
+    <div id="expFormWrap">
+      <div class="section-title">Log an expense</div>
+      <div class="card">
+        <div class="field"><label for="eAmt">Amount ($)</label><input type="number" id="eAmt" placeholder="0.00" min="0" step="0.01" inputmode="decimal"></div>
+        <div class="field"><label>Bucket</label>
+          <div class="seg" id="eBucketSeg">
+            <button data-b="dining" class="sel">🍽️ Dining</button>
+            <button data-b="fun">🎉 Pure fun</button>
+          </div>
         </div>
+        <div class="field"><label for="eNote">Note (optional)</label><input type="text" id="eNote" placeholder="e.g. Hot pot with friends" autocomplete="off"></div>
+        <button class="btn" id="addExpBtn">Log expense</button>
       </div>
-      <div class="field"><label for="eNote">Note (optional)</label><input type="text" id="eNote" placeholder="e.g. Hot pot with friends" autocomplete="off"></div>
-      <button class="btn" id="addExpBtn">Log expense</button>
+    </div>
+    <div class="card" id="expChatHint" style="display:none">
+      <div class="muted left"><span class="hint-emoji">💬</span> Log spending in chat, e.g. "spent $12 dining".</div>
     </div>
     <div class="section-title">Recent expenses</div>
     <div class="card" id="expList"><div class="empty">No expenses logged this month.</div></div>
@@ -241,6 +299,7 @@
   <div class="panel" id="panel-settings">
     <div class="section-title">Fun money rules</div>
     <div class="card">
+      <div class="muted left" id="settingsSyncNote" style="display:none;margin-bottom:10px">🔄 Synced values — managed from chat.</div>
       <div class="field"><label for="sRate">Dollars per todo point (e.g. 0.10 = 100 pts → $10)</label><input type="number" id="sRate" min="0" step="0.01" inputmode="decimal"></div>
       <div class="field"><label for="sBase">Monthly dining-out base allowance ($)</label><input type="number" id="sBase" min="0" step="1" inputmode="decimal"></div>
       <div class="field"><label>Unspent Pure Fun rolls over to next month</label>
@@ -261,7 +320,8 @@
 
 <nav class="tabbar">
   <button data-tab="todos" class="active"><span class="te">✅</span>Todos</button>
-  <button data-tab="money"><span class="te">💰</span>Fun money</button>
+  <button data-tab="calendar"><span class="te">📅</span>Calendar</button>
+  <button data-tab="money"><span class="te">💰</span>Money</button>
   <button data-tab="markets"><span class="te">📈</span>Markets</button>
   <button data-tab="settings"><span class="te">⚙️</span>Settings</button>
 </nav>
@@ -286,6 +346,13 @@ function prevMonth(mk){
   if (m < 1) { m = 12; y -= 1; }
   return y + "-" + pad2(m);
 }
+function shiftMonth(mk, delta){
+  const parts = mk.split("-").map(Number);
+  let y = parts[0], m = parts[1] + delta;
+  while (m < 1) { m += 12; y -= 1; }
+  while (m > 12) { m -= 12; y += 1; }
+  return y + "-" + pad2(m);
+}
 function uid(){ return Date.now().toString(36) + Math.random().toString(36).slice(2, 8); }
 function esc(s){
   return String(s == null ? "" : s).replace(/[&<>"']/g, c => ({
@@ -293,15 +360,61 @@ function esc(s){
   }[c]));
 }
 function round2(n){ return Math.round((n + Number.EPSILON) * 100) / 100; }
+/* round-half-to-even, matching Python's round() used by the ledger */
+function roundHalfEven(x){
+  const f = Math.floor(x), d = x - f;
+  if (d < 0.5) return f;
+  if (d > 0.5) return f + 1;
+  return (f % 2 === 0) ? f : f + 1;
+}
 function fmtMoney(n){ return "$" + round2(n).toFixed(2); }
 function fmtDate(iso){
   if (!iso) return "";
   const p = iso.split("-").map(Number);
   return new Date(p[0], p[1]-1, p[2]).toLocaleDateString(undefined, { month: "short", day: "numeric" });
 }
+function wdShort(iso){
+  if (!iso) return "";
+  const p = iso.split("-").map(Number);
+  return new Date(p[0], p[1]-1, p[2]).toLocaleDateString(undefined, { weekday: "short" });
+}
 function monthLabel(mk){
   const p = mk.split("-").map(Number);
   return new Date(p[0], p[1]-1, 1).toLocaleDateString(undefined, { month: "long", year: "numeric" });
+}
+
+/* 3-date timing model (mirrors incentive.py). Returns the bonus on top of 10 base pts. */
+function timingBonus(day, ideal, personal, hard){
+  if (!ideal) return 0;
+  if (day <= ideal) return 25;
+  personal = personal || ideal;
+  hard = hard || personal;
+  const dd = (a, b) => Math.round((new Date(a + "T12:00:00") - new Date(b + "T12:00:00")) / 86400000);
+  if (day <= personal){
+    const s = dd(personal, ideal);
+    return s <= 0 ? 10 : roundHalfEven(25 - 15 * dd(day, ideal) / s);
+  }
+  if (day <= hard){
+    const s = dd(hard, personal);
+    return s <= 0 ? -15 : roundHalfEven(10 - 25 * dd(day, personal) / s);
+  }
+  return -20;
+}
+function worthOn(t, day){ return 10 + timingBonus(day, t.ideal, t.personal, t.hard); }
+
+/* which todos appear in "Today's todos" (synced mode) */
+function visibleToday(t, today){
+  if (t.done) return t.done_date === today;      // completed today still shows, struck through
+  if (t.ideal && t.ideal > today) return false;  // not yet ideal day: hidden
+  return true;                                    // shows every day from ideal until done
+}
+/* which todos are active on a calendar day */
+function activeOn(t, day){
+  if (t.done) return t.done_date === day;
+  if (t.ideal && day < t.ideal) return false;
+  const end = t.hard || t.personal || t.ideal;
+  if (end && day > end) return false;
+  return true;
 }
 
 /* ================= state ================= */
@@ -310,23 +423,16 @@ const LS_KEY = "personalDashboard.v1";
 function seedState(){
   return {
     v: 1,
-    todos: [
-      { id: uid()+"1", title: "CS103 problem set", notes: "Due Friday — verify exact title & time", due: "2026-09-25", done: false },
-      { id: uid()+"2", title: "Find CS148 check-in Zoom link", notes: "Meeting Mon 9/28 1:00 PM", due: "2026-09-27", done: false },
-      { id: uid()+"3", title: "MS&E 226 PS1", notes: "Due Mon 11:59 PM", due: "2026-09-28", done: false },
-      { id: uid()+"4", title: "STATS 118 homework", notes: "Check Gradescope / Ed", due: "", done: false },
-      { id: uid()+"5", title: "Study early STATS 118 chapter", notes: "", due: "", done: false },
-      { id: uid()+"6", title: "Watch a STATS 118 lecture", notes: "", due: "", done: false }
-    ],
+    todos: [],
     lifetime: 0,
     weekly: 0,
     weekStart: weekStartStr(),
     streak: { current: 0, best: 0, lastDoneDate: "" },
     completions: {},
     money: {
-      rate: 0.10,          // dollars per todo point
-      diningBase: 150,     // monthly dining-out base allowance
-      rollover: true,      // unspent pure-fun rolls into next month
+      rate: 0.10,
+      diningBase: 150,
+      rollover: true,
       months: {}
     },
     watchlist: ["QQQ", "IQQ", "QQQM", "SPY"]
@@ -355,7 +461,71 @@ function save(){
   catch (e) { /* storage full/blocked: keep running in-memory */ }
 }
 
-/* ================= money engine ================= */
+/* ================= synced state (from state.json) ================= */
+let SYNC = null;
+function isSynced(){ return !!SYNC; }
+
+function trySync(){
+  fetch("state.json", { cache: "no-store" })
+    .then(r => { if (!r.ok) throw new Error("http " + r.status); return r.json(); })
+    .then(j => {
+      if (!j || !Array.isArray(j.todos)) throw new Error("bad state.json");
+      SYNC = {
+        todos: j.todos,
+        points: j.points || {},
+        money: j.money || {},
+        generatedAt: j.generated_at || "",
+        rulesText: j.rules_text || ""
+      };
+      loadSettings();
+      setDateLine("synced");
+      renderAll();
+    })
+    .catch(() => { setDateLine("offline"); });
+}
+
+function setDateLine(mode){
+  const base = new Date().toLocaleDateString(undefined, { weekday: "long", month: "long", day: "numeric" });
+  let suffix = " · syncing…";
+  if (mode === "synced") {
+    suffix = " · synced " + new Date().toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" });
+  } else if (mode === "offline") {
+    suffix = " · offline — on-device data";
+  }
+  $("dateLine").textContent = base + suffix;
+}
+
+/* normalize a todo into {title, done, done_date, ideal, personal, hard, points_awarded}
+   for the calendar (offline: localStorage `due` acts as all three dates) */
+function calTodos(){
+  if (isSynced()) return SYNC.todos;
+  return state.todos.map(t => ({
+    title: t.title, done: !!t.done, done_date: offlineDoneDate(t),
+    ideal: t.due || "", personal: t.due || "", hard: t.due || "",
+    points_awarded: null
+  }));
+}
+function offlineDoneDate(t){
+  if (!t.done) return "";
+  const pfx = t.id + "@";
+  for (const k in state.completions) {
+    if (k.indexOf(pfx) === 0) return k.slice(pfx.length);
+  }
+  return "";
+}
+
+function applyMode(){
+  const s = isSynced();
+  $("addTodoWrap").style.display = s ? "none" : "";
+  $("todoChatHint").style.display = s ? "" : "none";
+  $("expFormWrap").style.display = s ? "none" : "";
+  $("expChatHint").style.display = s ? "" : "none";
+  $("settingsSyncNote").style.display = s ? "" : "none";
+  ["sRate", "sBase", "saveSettingsBtn"].forEach(id => { $(id).disabled = s; });
+  document.querySelectorAll("#sRolloverSeg button").forEach(b => { b.disabled = s; });
+}
+
+/* ================= money engine (offline fallback) ================= */
 function newDiningMonth(){ return { spent: 0, expenses: [] }; }
 function newFunMonth(){ return { earned: 0, spent: 0, carryIn: 0, expenses: [] }; }
 
@@ -408,7 +578,7 @@ function deleteExpense(s, bucket, id, mk){
   return true;
 }
 
-/* ================= todo engine (tested rules) ================= */
+/* ================= todo engine (offline fallback) ================= */
 function weekStartStr(d){
   d = d ? new Date(d) : new Date();
   const day = (d.getDay() + 6) % 7; // Monday = 0
@@ -485,20 +655,72 @@ function dueBadge(due, today){
 
 /* ================= UI: todos ================= */
 function renderDashboard(){
-  const lvl = levelFor(state.lifetime);
+  let lifetime, weekly, cur, best, rate;
+  if (isSynced()) {
+    lifetime = SYNC.points.lifetime || 0;
+    weekly = SYNC.points.weekly || 0;
+    cur = SYNC.points.streak_current || 0;
+    best = SYNC.points.streak_best || 0;
+    rate = SYNC.money.rate || 0;
+  } else {
+    lifetime = state.lifetime; weekly = state.weekly;
+    cur = state.streak.current; best = state.streak.best;
+    rate = state.money.rate;
+  }
+  const lvl = levelFor(lifetime);
   $("levelNum").textContent = lvl;
-  $("lifetimePts").textContent = state.lifetime + " lifetime points";
-  $("weekPts").textContent = state.weekly + " this week · " + fmtMoney(state.weekly * state.money.rate) + " earned";
-  const into = state.lifetime % 100;
+  $("lifetimePts").textContent = lifetime + " lifetime points";
+  $("weekPts").textContent = weekly + " this week · " + fmtMoney(weekly * rate) + " earned";
+  const into = lifetime % 100;
   $("levelBar").style.width = into + "%";
   $("levelSub").textContent = into + " / 100 to level " + (lvl + 1);
-  $("streakNow").innerHTML = state.streak.current + " <small>days</small>";
-  $("streakBest").innerHTML = state.streak.best + " <small>days</small>";
+  $("streakNow").innerHTML = cur + " <small>days</small>";
+  $("streakBest").innerHTML = best + " <small>days</small>";
+}
+
+function dateBadges(t, today){
+  const out = [];
+  if (t.ideal) out.push('<span class="badge soon">🎯 ' + esc(wdShort(t.ideal)) + "</span>");
+  if (t.personal && t.personal !== t.ideal) out.push('<span class="badge">📅 ' + esc(wdShort(t.personal)) + "</span>");
+  if (t.hard && t.hard !== t.personal) out.push('<span class="badge">⛔ ' + esc(wdShort(t.hard)) + "</span>");
+  if (!t.done && t.personal && today > t.personal) out.push('<span class="badge overdue">past personal</span>');
+  if (!t.done && t.hard && today > t.hard) out.push('<span class="badge overdue">overdue</span>');
+  return out.join("");
+}
+
+function renderSyncedTodos(box, today){
+  const list = SYNC.todos
+    .filter(t => visibleToday(t, today))
+    .sort((a, b) => {
+      if (!!a.done !== !!b.done) return a.done ? 1 : -1;
+      const ka = a.personal || a.ideal || "9999";
+      const kb = b.personal || b.ideal || "9999";
+      return ka < kb ? -1 : ka > kb ? 1 : 0;
+    });
+  if (!list.length) { box.innerHTML = '<div class="empty">Nothing on the list for today 🎯</div>'; return; }
+  box.innerHTML = list.map(t => {
+    let worthBadge;
+    if (t.done) {
+      worthBadge = t.points_awarded != null
+        ? '<span class="badge worth">+' + t.points_awarded + " pts ✓</span>"
+        : '<span class="badge">done ✓</span>';
+    } else {
+      const w = worthOn(t, today);
+      worthBadge = '<span class="badge worth' + (w < 10 ? " neg" : "") + '">worth ' + w + " pts</span>";
+    }
+    return '<div class="todo' + (t.done ? " done" : "") + '">' +
+      '<div class="todo-body">' +
+        '<div class="title">' + esc(t.title) + "</div>" +
+        (t.notes ? '<div class="notes">' + esc(t.notes) + "</div>" : "") +
+        '<div class="row2">' + dateBadges(t, today) + worthBadge + "</div>" +
+      "</div></div>";
+  }).join("");
 }
 
 function renderTodos(){
   const today = todayStr();
   const box = $("todoList");
+  if (isSynced()) { renderSyncedTodos(box, today); return; }
   if (!state.todos.length) { box.innerHTML = '<div class="empty">Nothing to do. Add one below 🎯</div>'; return; }
   const sorted = [...state.todos].sort((a, b) => {
     if (a.done !== b.done) return a.done ? 1 : -1;
@@ -589,10 +811,66 @@ function consumeImportLink(){
     : "Those todos are already on your list"), 50);
 }
 
-/* ================= UI: fun money ================= */
+/* ================= UI: calendar ================= */
+let calCursor = monthKey();
+let calSel = todayStr();
+
+function isDateless(t){
+  return !t.ideal && !t.personal && !t.hard && !(t.done && t.done_date);
+}
+
+function renderCalendar(){
+  const mk = calCursor;
+  const p = mk.split("-").map(Number);
+  const firstDow = new Date(p[0], p[1] - 1, 1).getDay(); // 0 = Sunday
+  const dim = new Date(p[0], p[1], 0).getDate();
+  const todos = calTodos().filter(t => !isDateless(t));
+  const today = todayStr();
+  let cells = "";
+  ["S", "M", "T", "W", "T", "F", "S"].forEach(d => { cells += '<div class="cal-dow">' + d + "</div>"; });
+  for (let i = 0; i < firstDow; i++) cells += '<div class="cal-day blank"></div>';
+  for (let d = 1; d <= dim; d++){
+    const iso = mk + "-" + pad2(d);
+    const n = todos.filter(t => activeOn(t, iso)).length;
+    const cls = "cal-day" + (n ? " has" : "") + (iso === today ? " today" : "") + (iso === calSel ? " sel" : "");
+    cells += '<button class="' + cls + '" data-day="' + iso + '"><span>' + d + "</span>" +
+      '<span class="cnt">' + (n ? n : "") + "</span></button>";
+  }
+  $("calGrid").innerHTML = cells;
+  $("calTitle").textContent = monthLabel(mk);
+  renderCalDetail();
+  renderCalDateless();
+}
+
+function renderCalDateless(){
+  const box = $("calDateless");
+  const list = calTodos().filter(t => isDateless(t) && !t.done);
+  if (!list.length) { box.innerHTML = '<div class="empty">Nothing dateless.</div>'; return; }
+  box.innerHTML = list.map(t =>
+    '<div class="exp"><div class="what"><div class="n">' + esc(t.title) + "</div></div>" +
+    '<div class="amt">10 pts</div></div>').join("");
+}
+
+function renderCalDetail(){
+  const box = $("calDetail");
+  const list = calTodos().filter(t => activeOn(t, calSel));
+  $("calDetailTitle").textContent =
+    new Date(calSel + "T12:00:00").toLocaleDateString(undefined, { weekday: "long", month: "long", day: "numeric" });
+  if (!list.length) { box.innerHTML = '<div class="empty">Nothing on this day.</div>'; return; }
+  box.innerHTML = list.map(t => {
+    const right = t.done
+      ? (t.points_awarded != null ? "+" + t.points_awarded + " pts ✓" : "done ✓")
+      : worthOn(t, calSel) + " pts";
+    return '<div class="exp"><div class="what"><div class="n">' + esc(t.title) + '</div></div>' +
+      '<div class="amt">' + esc(right) + "</div></div>";
+  }).join("");
+}
+
+/* ================= UI: money ================= */
 let expBucket = "dining";
 
 function renderMoney(){
+  if (isSynced()) { renderSyncedMoney(); return; }
   const mk = monthKey();
   const b = balances(state, mk);
   $("moneyTotal").textContent = fmtMoney(b.total);
@@ -622,6 +900,35 @@ function renderMoney(){
         <div class="d">${esc(fmtDate(e.date))}</div>
       </div>
       <button class="icon-btn" data-expdel="${e.id}" data-bucket="${e.bucket}">🗑</button>
+    </div>`).join("");
+}
+
+function renderSyncedMoney(){
+  const m = SYNC.money;
+  const total = round2((m.fun_balance || 0) + (m.dining_left || 0));
+  $("moneyTotal").textContent = fmtMoney(total);
+  $("moneySub").textContent = monthLabel(m.month || monthKey()) + " · " + fmtMoney(m.rate || 0) + " per point";
+
+  $("diningBal").textContent = fmtMoney(m.dining_left || 0);
+  $("diningMeta").textContent = "Base " + fmtMoney(m.dining_base || 0) + " · spent " + fmtMoney(m.dining_spent || 0);
+  const dBase = m.dining_base || 1;
+  $("diningBar").style.width = Math.min(100, Math.max(0, ((m.dining_left || 0) / dBase) * 100)) + "%";
+
+  $("funBal").textContent = fmtMoney(m.fun_balance || 0);
+  $("funMeta").textContent = "Earned " + fmtMoney(m.fun_earned || 0) + " · spent " + fmtMoney(m.fun_spent || 0);
+  const fDen = Math.max(m.fun_earned || 0, 1);
+  $("funBar").style.width = Math.min(100, Math.max(0, ((m.fun_balance || 0) / fDen) * 100)) + "%";
+
+  const all = Array.isArray(m.expenses) ? m.expenses : [];
+  const box = $("expList");
+  if (!all.length) { box.innerHTML = '<div class="empty">No expenses logged this month.</div>'; return; }
+  box.innerHTML = all.map(e => `
+    <div class="exp">
+      <div class="amt">${fmtMoney(e.amount)}</div>
+      <div class="what">
+        <div class="n">${e.bucket === "dining" ? "🍽️" : "🎉"} ${esc(e.note || (e.bucket === "dining" ? "Dining out" : "Pure fun"))}</div>
+        <div class="d">${esc(fmtDate(e.date))}</div>
+      </div>
     </div>`).join("");
 }
 
@@ -687,8 +994,11 @@ function addSymbol(){
 
 /* ================= UI: settings ================= */
 function loadSettings(){
-  $("sRate").value = state.money.rate;
-  $("sBase").value = state.money.diningBase;
+  const m = isSynced()
+    ? { rate: SYNC.money.rate, diningBase: SYNC.money.dining_base }
+    : state.money;
+  $("sRate").value = m.rate;
+  $("sBase").value = m.diningBase;
   document.querySelectorAll("#sRolloverSeg button").forEach(b =>
     b.classList.toggle("sel", (b.dataset.v === "1") === state.money.rollover));
 }
@@ -705,7 +1015,7 @@ function saveSettings(){
 }
 
 /* ================= tabs & events ================= */
-const TITLES = { todos: "Todos", money: "Fun money", markets: "Markets", settings: "Settings" };
+const TITLES = { todos: "Todos", calendar: "Calendar", money: "Money", markets: "Markets", settings: "Settings" };
 function switchTab(name){
   document.querySelectorAll(".tabbar button").forEach(b => b.classList.toggle("active", b.dataset.tab === name));
   document.querySelectorAll(".panel").forEach(p => p.classList.toggle("active", p.id === "panel-" + name));
@@ -716,13 +1026,15 @@ function switchTab(name){
 
 function renderAll(){
   rolloverWeekly(state);
+  applyMode();
   renderDashboard();
   renderTodos();
   renderMoney();
+  renderCalendar();
 }
 
 /* ================= init ================= */
-$("dateLine").textContent = new Date().toLocaleDateString(undefined, { weekday: "long", month: "long", day: "numeric" });
+setDateLine("syncing");
 
 document.querySelectorAll(".tabbar button").forEach(b =>
   b.addEventListener("click", () => switchTab(b.dataset.tab)));
@@ -748,6 +1060,15 @@ $("todoList").addEventListener("change", e => {
   if (!inp) return;
   const t = state.todos.find(x => x.id === inp.dataset.id);
   if (t) { t.due = inp.value; save(); renderTodos(); }
+});
+
+$("calPrev").addEventListener("click", () => { calCursor = shiftMonth(calCursor, -1); renderCalendar(); });
+$("calNext").addEventListener("click", () => { calCursor = shiftMonth(calCursor, 1); renderCalendar(); });
+$("calGrid").addEventListener("click", e => {
+  const btn = e.target.closest("[data-day]");
+  if (!btn) return;
+  calSel = btn.dataset.day;
+  renderCalendar();
 });
 
 $("addExpBtn").addEventListener("click", uiAddExpense);
@@ -791,6 +1112,7 @@ loadSettings();
 consumeImportLink();
 renderAll();
 fetchMarkets();
+trySync();
 </script>
 </body>
 </html>
